@@ -40,8 +40,7 @@ export default function member(){
     },[]);
 
     //각 항목 검사 : feedback
-    ////////////////////////////////////
-    // 아이디
+    // 아이디 (형식검사 + 중복검사)
     const checkMemberId = useCallback(async(e)=>{
         const regex = /^[a-z][a-z0-9]{4,19}$/;
         const valid = regex.test(member.memberId);
@@ -67,12 +66,40 @@ export default function member(){
         }
     },[member,memberClass])
 
+    // 비밀번호
+    
+    // 닉네임 (형식검사 + 중복검사)
+    const checkMemberNickname = useCallback(async(e)=>{
+        const regex = /^[가-힣0-9]{2,10}$/;
+        const valid = regex.test(member.memberNickname);
+        if(valid){ // 형식 통과
+            const {data} = await axios.get(`/member/memberNickname/${member.memberNickname}`)
+            if(data===true){ // 중복X
+                setMemberClass(prev=>({...prev,memberNickname : "is-valid"}));
+            }
+            else{ // 사용중 (ID중복)
+                setMemberClass(prev=>({...prev, memberNickname : "is-invalid"}));
+                setmemberNicknameFeedback("이미 사용중인 닉네임입니다");
+            }
+        }
+        else { // 형식 오류
+            setMemberClass(prev=>({...prev, memberNickname : "is-invalid"}));
+            setmemberNicknameFeedback("닉네임은 한글/숫자를 활용한 2~10글자입니다");
+        }
+        
+        //필수항목
+        if(member.memberNickname.length===0){
+            setMemberClass(prev=>({...prev, memberNickname : "is-invalid"}));
+            setmemberNicknameFeedback("닉네임은 필수 항목입니다");
+        }
+    },[member,memberClass])
+
 
 
     //memo
     // 모든 항목이 유효한지 검사(선택항목은 is-invalid가 아니어야함)
     const memberValid = useMemo(()=>{
-        필수항목
+        //필수항목
         if(memberClass.memberId !== "is-valid") return false;
         if(memberClass.memberPw !== "is-valid") return false;
         if(memberClass.memberNickname !== "is-valid") return false;
@@ -106,7 +133,7 @@ export default function member(){
                 <input type="text" className={`form-control ${memberClass.memberId}`} 
                             name="memberId" value={member.memberId}
                             onChange={changeStrValue}
-                            //onBlur={}
+                            onBlur={checkMemberId}
                             />
                 <div className="valid-feedback"></div>
                 <div className="invalid-feedback">{memberIdFeedback}</div>
@@ -134,7 +161,7 @@ export default function member(){
                 <input type="text" className={`form-control ${memberClass.memberNickname}`} 
                             name="memberNickname" value={member.memberNickname}
                             onChange={changeStrValue}
-                            //onBlur={}
+                            onBlur={checkMemberNickname}
                             />
                 <div className="valid-feedback"></div>
                 <div className="invalid-feedback">{memberNicknameFeedback}</div>

@@ -1,6 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 import Test from "./Contents/Test";
 import MemberJoin from "./member/MemberJoin";
+import ReviewWrite from "./review/ReviewWrite";
+import ReviewSearch from "./review/ReviewSearch";
 
 export default function Content() {
     return (<>
@@ -18,8 +20,9 @@ export default function Content() {
                    {/* 회원 페이지 */}
                         <Route path="/member/join" element={<MemberJoin/>}></Route>
 
-
-
+                    {/* 리뷰 페이지 */}
+                        <Route path="/review/insert" element={<ReviewWrite/>}></Route>
+                        <Route path="/review/search" element={<ReviewSearch/>}></Route>
                 </Routes>
             </div>
         </div>

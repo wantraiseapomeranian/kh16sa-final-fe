@@ -109,7 +109,19 @@ export default function member(){
         }
     },[member,memberClass])
 
+    //생년월일
+        const checkMemberBirth = useCallback(e=>{
+            const regex = /^(19[0-9]{2}|20[0-9]{2})-((02-(0[1-9]|1[0-9]|2[0-9]))|((0[469]|11)-(0[1-9]|1[0-9]|2[0-9]|30))|((0[13578]|1[02])-(0[1-9]|1[0-9]|2[0-9]|3[01])))$/
+            const valid = member.memberContact.length === 0 || regex.test(member.memberBirth); 
+            setMemberClass({...memberClass, memberBirth : valid ? "is-valid" : "is-invalid"});
+        },[member, memberClass])
 
+    //연락처
+        const checkMemberContact = useCallback(e=>{
+            const regex = /^010[1-9][0-9]{7}$/
+            const valid = member.memberContact.length === 0 || regex.test(member.memberContact); 
+            setMemberClass({...memberClass, memberContact : valid ? "is-valid" : "is-invalid"});
+        },[member, memberClass])
 
     //memo
     // 모든 항목이 유효한지 검사(선택항목은 is-invalid가 아니어야함)
@@ -218,10 +230,10 @@ export default function member(){
                 <input type="text" className={`form-control ${memberClass.memberBirth}`} 
                             name="memberBirth" value={member.memberBirth}
                             onChange={changeStrValue}
-                            //onBlur={}
+                            onBlur={checkMemberBirth}
                             />
                 <div className="valid-feedback"></div>
-                <div className="invalid-feedback"></div>
+                <div className="invalid-feedback">잘못된 날짜 형식입니다</div>
             </div>
         </div>
 
@@ -231,11 +243,11 @@ export default function member(){
             <div className="col-sm-9">
                 <input type="text" className={`form-control ${memberClass.memberContact}`} 
                             name="memberContact" value={member.memberContact}
-                            onChange={changeDateValue}
-                            //onBlur={}
+                            onChange={changeStrValue}
+                            onBlur={checkMemberContact}
                             />
                 <div className="valid-feedback"></div>
-                <div className="invalid-feedback"></div>
+                <div className="invalid-feedback">010으로 시작하는 11자리 번호를 입력하세요(- 사용불가)</div>
             </div>
         </div>
         

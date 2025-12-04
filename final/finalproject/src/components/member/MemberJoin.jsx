@@ -109,6 +109,33 @@ export default function member(){
         }
     },[member,memberClass])
 
+    // 이메일
+            // 이메일 형식검사와 인증검사
+            const checkMemberEmail = useCallback(async(e)=>{
+                if(member.memberEmail.length === 0 ){
+                    setMemberClass(prev=>({...prev, memberEmail : "is-invalid"}));
+                    setmemberEmailFeedback("이메일은 필수항목입니다");
+                    return;
+                }
+                const regex = /^[A-Za-z0-9._-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/; 
+                const valid = regex.test(member.memberEmail);
+                if(valid=true){
+                    if(certNumberClass !== "is-valid"){ // 인증되지 않음
+                        setMemberClass(prev=>({...prev, accountEmail : "is-invalid"}));
+                        setmemberEmailFeedback("이메일 인증이 필요합니다");
+                    }
+                }
+                else {
+                    setMemberClass(prev=>({...prev, accountEmail : "is-invalid"}));
+                    setmemberEmailFeedback("이메일 형식이 맞지 않습니다")
+                }
+            },[])
+
+            //이메일 전송
+            
+
+
+
     //생년월일
         const checkMemberBirth = useCallback(e=>{
             const regex = /^(19[0-9]{2}|20[0-9]{2})-((02-(0[1-9]|1[0-9]|2[0-9]))|((0[469]|11)-(0[1-9]|1[0-9]|2[0-9]|30))|((0[13578]|1[02])-(0[1-9]|1[0-9]|2[0-9]|3[01])))$/

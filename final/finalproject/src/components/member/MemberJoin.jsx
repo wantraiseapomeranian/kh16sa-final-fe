@@ -9,12 +9,12 @@ export default function member(){
 
     //state
     const [member, setMember] = useState({
-        memberId : "", memberPw : "", memberNickname : "",
+        memberId : "", memberPw : "", memberPwCheck : "", memberNickname : "",
         memberEmail : "", memberBirth : "", memberContact : "",
         memberPost : "", memberAddress1 : "", memberAddress2 : ""
     });
     const [memberClass, setMemberClass] = useState({
-        memberId : "", memberPw : "", memberNickname : "",
+        memberId : "", memberPw : "", memberPwCheck : "",memberNickname : "",
         memberEmail : "", memberBirth : "", memberContact : "",
         memberPost : "", memberAddress1 : "", memberAddress2 : ""
     });
@@ -67,6 +67,21 @@ export default function member(){
     },[member,memberClass])
 
     // 비밀번호
+    const checkMemberPw = useCallback(async(e)=>{
+        //비밀번호 형식검사
+        const regex = /^(?=.*?[A-Z]+)(?=.*?[a-z]+)(?=.*?[0-9]+)(?=.*?[!@#$]+)[A-Za-z0-9!@#$]{8,16}$/;
+        const valid = regex.test(member.memberPw);
+        setMemberClass(prev=>({...prev,memberPw : valid ? "is-valid" : "is-invalid"}));
+        //비밀번호 중복검사
+        if(member.memberPw.length > 0){
+            const valid2 = member.memberPw === member.memberPwCheck;
+            setMemberClass(prev=>({...prev, memberPwCheck : valid2 ? "is-valid" : "is-invalid"}));
+            setmemberPwFeedback("비밀번호 확인이 일치하지 않습니다")
+        } else { // 비밀번호 미입력
+            setMemberClass(prev =>({...prev, memberPwCheck : "is-invalid"}));
+            setmemberPwFeedback("비밀번호는 필수 항목입니다")
+        }
+    },[member,memberClass])
     
     // 닉네임 (형식검사 + 중복검사)
     const checkMemberNickname = useCallback(async(e)=>{
@@ -102,6 +117,7 @@ export default function member(){
         //필수항목
         if(memberClass.memberId !== "is-valid") return false;
         if(memberClass.memberPw !== "is-valid") return false;
+        if(memberClass.memberPwCheck !== "is-valid") return false;
         if(memberClass.memberNickname !== "is-valid") return false;
         if(memberClass.memberEmail !== "is-valid") return false;
         //선택항목
@@ -147,9 +163,22 @@ export default function member(){
                 <input type="text" className={`form-control ${memberClass.memberPw}`} 
                             name="memberPw" value={member.memberPw}
                             onChange={changeStrValue}
-                            //onBlur={}
+                            onBlur={checkMemberPw}
                             />
-                <div className="valid-feedback"></div>
+                <div className="valid-feedback">사용 가능한 비밀번호입니다</div>
+                <div className="invalid-feedback">대/소문자, 숫자, 특수문자를 반드시 1개 포함하여 8~16자로 작성하세요</div>
+            </div>
+        </div>
+        {/* 비밀번호 확인 */}
+        <div className="row mt-1">
+            <label className="col-sm-3 col-form-label"></label>
+            <div className="col-sm-9">
+                <input type="text" className={`form-control ${memberClass.memberPwCheck}`} 
+                            name="memberPwCheck" value={member.memberPwCheck}
+                            onChange={changeStrValue}
+                            onBlur={checkMemberPw}
+                            />
+                <div className="valid-feedback">비밀번호가 일치합니다</div>
                 <div className="invalid-feedback">{memberPwFeedback}</div>
             </div>
         </div>

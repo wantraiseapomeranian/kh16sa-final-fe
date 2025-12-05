@@ -1,4 +1,4 @@
-import { FaAsterisk, FaEraser, FaMagnifyingGlass } from "react-icons/fa6";
+import { FaAsterisk, FaEraser, FaEye, FaEyeSlash, FaKey, FaMagnifyingGlass, FaPaperPlane, FaSpinner, FaUser } from "react-icons/fa6";
 import axios from "axios";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom"
@@ -88,6 +88,10 @@ export default function member(){
         }
     },[member,memberClass])
     
+        //비밀번호 숨김/표시
+        const [showPassword, setShowPassword] = useState(false);
+
+
     // 닉네임 (형식검사 + 중복검사)
     const checkMemberNickname = useCallback(async(e)=>{
         const regex = /^[가-힣0-9]{2,10}$/;
@@ -297,7 +301,7 @@ export default function member(){
         if(memberValid === false) return ;
         const {data} = await axios.post("/member/",member)
         
-        //navigate("/"); // 메인페이지
+        navigate("/member/joinFinish"); // 메인페이지
     },[member,memberValid])
 
     //render
@@ -320,9 +324,16 @@ export default function member(){
 
         {/* 비밀번호 */}
         <div className="row mt-4">
-            <label className="col-sm-3 col-form-label">비밀번호<FaAsterisk className="text-danger"/></label>
+            <label className="col-sm-3 col-form-label">
+                    비밀번호<FaAsterisk className="text-danger"/>
+                {showPassword === true ? (
+                        <FaEye className="ms-2" onClick={e=>setShowPassword(false)}/>
+                    ) : (
+                        <FaEyeSlash className="ms-2"onClick={e=>setShowPassword(true)}/>
+                    ) }
+            </label>
             <div className="col-sm-9">
-                <input type="text" className={`form-control ${memberClass.memberPw}`} 
+                <input type={showPassword===true ? "text" : "password"} className={`form-control ${memberClass.memberPw}`} 
                             name="memberPw" value={member.memberPw}
                             onChange={changeStrValue}
                             onBlur={checkMemberPw}
@@ -335,7 +346,7 @@ export default function member(){
         <div className="row mt-1">
             <label className="col-sm-3 col-form-label"></label>
             <div className="col-sm-9">
-                <input type="text" className={`form-control ${memberClass.memberPwCheck}`} 
+                <input type={showPassword===true ? "text" : "password"}  className={`form-control ${memberClass.memberPwCheck}`} 
                             name="memberPwCheck" value={member.memberPwCheck}
                             onChange={changeStrValue}
                             onBlur={checkMemberPw}
@@ -371,9 +382,9 @@ export default function member(){
                 {/* sending 여부에 따라 버튼의 상태를 변경 */}
                 <button type="button" className="btn btn-primary ms-2" onClick={sendCertEmail}
                             disabled={sending === true}>
-                     {/* {sending === true ? <FaSpinner className="fa-spin cusom-spinner"/> : <FapaperPlane/>} */}
+                     {sending === true ? <FaSpinner className="fa-spin cusom-spinner"/> : <FaPaperPlane/>}
                     <span className="ms-2 d-none d-sm-inline">
-                            {sending === true ? "인증번호 발송중" : "인증번호 전송"}
+                            {sending === true ? "인증번호 발송중" : "전송"}
                     </span>
                 </button>
                 <div className="valid-feedback">{memberEmailFeedback}</div>
@@ -385,6 +396,7 @@ export default function member(){
                 <input type="text" className={`form-control flex-grow-1 w-auto ${certNumberClass}`}
                         value = {certNumber} onChange={changeCertNumber} onBlur={checkCertNumber}></input>
                 <button type="button" className="btn btn-success ms-2" onClick={sendCertCheck}>
+                    <FaKey/>
                     <span className="ms-2 d-none d-sm-inline">확인</span>
                 </button>
                 <div className="valid-feedback"></div>
@@ -476,6 +488,7 @@ export default function member(){
                             disabled={memberValid === false}
                             onClick = {sendData}
                             >
+                <FaUser className="me-2"/>
                 <span>가입</span>
                 </button>
             </div>

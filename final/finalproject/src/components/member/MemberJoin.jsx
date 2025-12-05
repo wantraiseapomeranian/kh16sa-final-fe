@@ -18,13 +18,15 @@ export default function member(){
         memberEmail : "", memberBirth : "", memberContact : "",
         memberPost : "", memberAddress1 : "", memberAddress2 : ""
     });
+    const [certNumber, setCertNumber] = useState("");
+    const [certNumberClass, setCertNumberClass] = useState("");
 
     // 출력할 피드백
-    const [memberIdFeedback, setmemberIdFeedback] = useState("");
-    const [memberPwFeedback, setmemberPwFeedback] = useState("");
-    const [memberNicknameFeedback, setmemberNicknameFeedback] = useState("");
-    const [memberEmailFeedback, setmemberEmailFeedback] = useState("");
-
+    const [memberIdFeedback, setMemberIdFeedback] = useState("");
+    const [memberPwFeedback, setMemberPwFeedback] = useState("");
+    const [memberNicknameFeedback, setMemberNicknameFeedback] = useState("");
+    const [memberEmailFeedback, setMemberEmailFeedback] = useState("");
+    const [certNumberFeedback, setCertNumberFeedback] = useState("");
 
 
     // callback
@@ -36,7 +38,7 @@ export default function member(){
     const changeDateValue = useCallback((date)=>{
         // → 별도의 포맷 전환 절차가 필요
         const replacement = format(date,"yyyy-MM-dd");
-        setAccount(prev=>({...prev, accountBirth : replacement}));
+        setMember(prev=>({...prev, memberBirth : replacement}));
     },[]);
 
     //각 항목 검사 : feedback
@@ -51,18 +53,18 @@ export default function member(){
             }
             else{ // 사용중 (ID중복)
                 setMemberClass(prev=>({...prev, memberId : "is-invalid"}));
-                setmemberIdFeedback("이미 사용중인 아이디입니다");
+                setMemberIdFeedback("이미 사용중인 아이디입니다");
             }
         }
         else { // 형식 오류
             setMemberClass(prev=>({...prev, memberId : "is-invalid"}));
-            setmemberIdFeedback("영문 소문자로 시작하며, 숫자를 포함한 5-20자로 작성하세요");
+            setMemberIdFeedback("영문 소문자로 시작하며, 숫자를 포함한 5-20자로 작성하세요");
         }
         
         //필수항목
         if(member.memberId.length===0){
             setMemberClass(prev=>({...prev, memberId : "is-invalid"}));
-            setmemberIdFeedback("아이디는 필수 항목입니다");
+            setMemberIdFeedback("아이디는 필수 항목입니다");
         }
     },[member,memberClass])
 
@@ -76,10 +78,10 @@ export default function member(){
         if(member.memberPw.length > 0){
             const valid2 = member.memberPw === member.memberPwCheck;
             setMemberClass(prev=>({...prev, memberPwCheck : valid2 ? "is-valid" : "is-invalid"}));
-            setmemberPwFeedback("비밀번호 확인이 일치하지 않습니다")
+            setMemberPwFeedback("비밀번호 확인이 일치하지 않습니다")
         } else { // 비밀번호 미입력
             setMemberClass(prev =>({...prev, memberPwCheck : "is-invalid"}));
-            setmemberPwFeedback("비밀번호는 필수 항목입니다")
+            setMemberPwFeedback("비밀번호는 필수 항목입니다")
         }
     },[member,memberClass])
     
@@ -94,18 +96,18 @@ export default function member(){
             }
             else{ // 사용중 (ID중복)
                 setMemberClass(prev=>({...prev, memberNickname : "is-invalid"}));
-                setmemberNicknameFeedback("이미 사용중인 닉네임입니다");
+                setMemberNicknameFeedback("이미 사용중인 닉네임입니다");
             }
         }
         else { // 형식 오류
             setMemberClass(prev=>({...prev, memberNickname : "is-invalid"}));
-            setmemberNicknameFeedback("닉네임은 한글/숫자를 활용한 2~10글자입니다");
+            setMemberNicknameFeedback("닉네임은 한글/숫자를 활용한 2~10글자입니다");
         }
         
         //필수항목
         if(member.memberNickname.length===0){
             setMemberClass(prev=>({...prev, memberNickname : "is-invalid"}));
-            setmemberNicknameFeedback("닉네임은 필수 항목입니다");
+            setMemberNicknameFeedback("닉네임은 필수 항목입니다");
         }
     },[member,memberClass])
 
@@ -114,27 +116,89 @@ export default function member(){
             const checkMemberEmail = useCallback(async(e)=>{
                 if(member.memberEmail.length === 0 ){
                     setMemberClass(prev=>({...prev, memberEmail : "is-invalid"}));
-                    setmemberEmailFeedback("이메일은 필수항목입니다");
+                    setMemberEmailFeedback("이메일은 필수항목입니다");
                     return;
                 }
                 const regex = /^[A-Za-z0-9._-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/; 
                 const valid = regex.test(member.memberEmail);
-                if(valid=true){
+                if(valid === true){
                     if(certNumberClass !== "is-valid"){ // 인증되지 않음
-                        setMemberClass(prev=>({...prev, accountEmail : "is-invalid"}));
-                        setmemberEmailFeedback("이메일 인증이 필요합니다");
+                        setMemberClass(prev=>({...prev, memberEmail : "is-invalid"}));
+                        setMemberEmailFeedback("이메일 인증이 필요합니다");
                     }
                 }
                 else {
-                    setMemberClass(prev=>({...prev, accountEmail : "is-invalid"}));
-                    setmemberEmailFeedback("이메일 형식이 맞지 않습니다")
+                    setMemberClass(prev=>({...prev, memberEmail : "is-invalid"}));
+                    setMemberEmailFeedback("이메일 형식이 맞지 않습니다")
                 }
-            },[])
+            },[member, certNumberClass])
 
             //이메일 전송
+            const [sending, setSending] = useState(null);
+            const sendCertEmail = useCallback(async()=>{
+                resetMemberEmail();
+                // 입력안하고 버튼 눌렀을때, 작동X + 피드백 출력
+                if(member.memberEmail.length===0){
+                    setMemberClass(prev=>({...prev, memberEmail : "is-invalid"}));
+                    setMemberEmailFeedback("이메일은 필수항목입니다");
+                    return;
+                }
+                // 이메일 형식 오류시 → 전송X
+                const regex = /^[A-Za-z0-9._-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/; 
+                const emailValid = regex.test(member.memberEmail);
+                if(emailValid===false){
+                    return;
+                }
+                // 통과시 이메일 전송
+                setSending(true);
+                const {data} = await axios.post("/cert/send", {certEmail : member.memberEmail});
+                setSending(false);
+                setMemberEmailFeedback("이메일이 전송되었습니다")
+
+            },[member, memberClass])  
             
+            // 이메일 - 인증번호
+            const changeCertNumber = useCallback(e=>{
+                const replacement = e.target.value.replace(/[^0-9]+/g,""); // 숫자가 아닌 항목을 제거한 뒤
+                setCertNumber(replacement)
+            },[])
+                //인증번호 미입력시
+            const checkCertNumber = useCallback(e=>{
+                if(certNumber.length===0){
+                    setCertNumberClass("is-invalid");
+                    setCertNumberFeedback("인증번호를 입력해주세요");
+                }
+                else{setCertNumberClass(prev=>({...prev, certNumber : ""}));}   
+            },[certNumber] )
 
+            const sendCertCheck = useCallback(async e=>{
+                try{
+                    const {data} = await axios.post("/cert/check", {
+                        certEmail : member.memberEmail,
+                        certNumber : certNumber
+                    });
+                    if(data.result === true){//인증성공
+                        setCertNumberClass("is-valid");
+                        setSending(null); 
+                        setMemberClass(prev=>({...prev, memberEmail : "is-valid"}));
+                        setMemberEmailFeedback(data.message);
+                    }
+                    else{ // 인증실패
+                        setCertNumberClass("is-invalid");
+                        setCertNumberFeedback(data.message);
+                    }
+                }
+                catch(err){
+                        setCertNumberClass("is-invalid");
+                        setCertNumberFeedback("인증번호 형식이 부적합합니다");
+                }
+            },[member, certNumber]);
 
+            // 입력시 이메일입력창 초기화
+            const resetMemberEmail = useCallback(()=>{
+                setMemberClass(prev=>({...prev, memberEmail:""}));
+                setMemberEmailFeedback("");
+            },[]);
 
     //생년월일
         const checkMemberBirth = useCallback(e=>{
@@ -239,15 +303,35 @@ export default function member(){
         {/* 이메일 */}
         <div className="row mt-4">
             <label className="col-sm-3 col-form-label">이메일</label>
-            <div className="col-sm-9">
-                <input type="text" className={`form-control ${memberClass.memberEmail}`} 
-                            name="memberEmail" value={member.memberEmail}
+            <div className="col-sm-9 d-flex flex-wrap text-nowrap" >
+                <input type="text" className={`form-control w-auto flex-grow-1 ${memberClass.memberEmail}`} 
+                            name="memberEmail" value={member.memberEmail} inputMode="email"
                             onChange={changeStrValue}
-                            //onBlur={}
+                            onBlur={checkMemberEmail}
                             />
-                <div className="valid-feedback"></div>
+                {/* sending 여부에 따라 버튼의 상태를 변경 */}
+                <button type="button" className="btn btn-primary ms-2" onClick={sendCertEmail}
+                            disabled={sending === true}>
+                     {/* {sending === true ? <FaSpinner className="fa-spin cusom-spinner"/> : <FapaperPlane/>} */}
+                    <span className="ms-2 d-none d-sm-inline">
+                            {sending === true ? "인증번호 발송중" : "인증번호 전송"}
+                    </span>
+                </button>
+                <div className="valid-feedback">{memberEmailFeedback}</div>
                 <div className="invalid-feedback">{memberEmailFeedback}</div>
             </div>
+        {/* 이메일 인증번호 입력 */}
+        {sending === false && (
+            <div className = "mt-2 col-sm-9 offset-sm-3 d-flex flex-wrap text-nowrap">
+                <input type="text" className={`form-control flex-grow-1 w-auto ${certNumberClass}`}
+                        value = {certNumber} onChange={changeCertNumber} onBlur={checkCertNumber}></input>
+                <button type="button" className="btn btn-success ms-2" onClick={sendCertCheck}>
+                    <span className="ms-2 d-none d-sm-inline">확인</span>
+                </button>
+                <div className="valid-feedback"></div>
+                <div className="invalid-feedback">{certNumberFeedback}</div>
+            </div>
+        )}
         </div>
 
         {/* 생년월일 */}

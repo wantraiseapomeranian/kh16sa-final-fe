@@ -3,13 +3,14 @@ import { useCallback } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {useAtom} from "jotai";
+import { accessTokenState, loginIdState, loginLevelState, refreshTokenState } from "../../utils/jotai";
 
 export default function MemberLogin(){
     //통합 state
-    const [loginId , setLoginId] = useAtom();
-    const [loginLevel , setLoginLevel] = useAtom();
-    const [accessToken , setAccessToken] = useAtom();
-    const [refreshToken , setRefreshToken] = useAtom();
+    const [loginId , setLoginId] = useAtom(loginIdState);
+    const [loginLevel , setLoginLevel] = useAtom(loginLevelState);
+    const [accessToken , setAccessToken] = useAtom(accessTokenState);
+    const [refreshToken , setRefreshToken] = useAtom(refreshTokenState);
     // 도구
     const navigate = useNavigate();
     //state
@@ -31,15 +32,16 @@ export default function MemberLogin(){
 
             // Authorization에 accesstoken 저장
             axios.defaults.headers.common["Authorization"] = `Bearer ${data.accessToken}`;
+            
             //통합 state 저장
-            setLoginId();
-            setLoginLevel();
-            setAccessToken();
-            setRefreshToken();
+            setLoginId(data.loginId);
+            setLoginLevel(data.loginLevel);
+            setAccessToken(data.accessToken);
+            setRefreshToken(data.refreshToken);
             // 화면이동
             setLogin(true);
             console.log("로그인 성공");
-            //navigate("/");
+            navigate("/");
         }
         catch(err){
             setLogin(false);

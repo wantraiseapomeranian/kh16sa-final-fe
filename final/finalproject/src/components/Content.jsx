@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import Test from "./Contents/Test";
 import MemberJoin from "./member/MemberJoin";
+import SearchAndSave from "./Contents/SearchAndSave";
 
 import MemberJoinFinish from "./member/MemberJoinFinish";
 import MemberLogin from "./member/MemberLogin";

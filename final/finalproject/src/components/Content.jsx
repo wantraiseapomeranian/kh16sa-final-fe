@@ -22,6 +22,7 @@ import MemberMyinfo from "./member/MemberMyinfo";
 import MemberMyreview from "./member/MemberMyreview";
 import MemberEdit from "./member/MemberEdit";
 import MemberEditPassword from "./member/MemberEditPassword";
+import ReviewSearch from "./review/ReviewUpdate";
 
 
 
@@ -40,6 +41,10 @@ export default function Content() {
                     
                     {/* contents */}
                     <Route path="/contents/test" element={<Test/>}></Route>
+
+                    <Route path="/contents/test2" element={<SearchAndSave/>}>
+                        <Route path="/contents/test2/review/:contentsId" element={<ReviewWrite/>}></Route>
+                    </Route>
 
                     <Route path="/contents/searchTitle" element={<SearchContents/>}></Route>
                     <Route path="/contents/genreList" element={<GenreList/>}></Route>
@@ -65,6 +70,8 @@ export default function Content() {
 
                     <Route path="/review/search" element={<ReviewSearch/>}></Route>
                     <Route path="/review/write/:contentsId" element={<WriteReview/>}></Route>
+
+                    
                     <Route path="/contents/searchForReview" element={<SearchAndSave/>}>
                         <Route path="/contents/searchForReview/review/:contentsId" element={<ReviewWrite/>}></Route>
                     </Route>

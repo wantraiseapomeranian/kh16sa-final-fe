@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Button } from "bootstrap";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { FaQuestion } from "react-icons/fa";
 import { FaBookmark, FaHeart, FaPencil } from "react-icons/fa6";
 import { RiArrowGoBackFill } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
@@ -245,7 +246,8 @@ export default function SearchContents() {
                                     </div>
                                 </div>
                                 <div className="text-end mb-3">
-                                    <button className="btn btn-warning" onClick={writeReview}><FaPencil className="mb-1 me-1"/>리뷰등록</button>
+                                    <button className="btn btn-success" onClick={writeReview}><FaPencil className="mb-1 me-1"/>리뷰등록</button>
+                                    <button className="btn btn-warning ms-2"><FaQuestion className="mb-1 me-1" /> 퀴즈</button>
                                 </div>    
                             </div>
                             )}    

@@ -1,7 +1,8 @@
 import axios from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FaBookmark, FaHeart, FaPencil } from "react-icons/fa6";
-import { useParams } from "react-router-dom";
+import { FaQuestion } from "react-icons/fa";
+import { useNavigate, useParams } from "react-router-dom";
 
 const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
@@ -17,6 +18,7 @@ export default function ContentsDetail() {
     
     const {contentsId} = useParams();
 
+    const navigate = useNavigate();
 
     //영화 정보 state
     const [contentsDetail, setContentsDetail] = useState(INITIAL_DETAIL);
@@ -47,6 +49,13 @@ export default function ContentsDetail() {
     const getPosterUrl = useCallback((path) => {
         return path ? `${TMDB_IMAGE_BASE_URL}${path}` : 'https://placehold.co/500x750/cccccc/333333?text=No+Image';
     }, []);
+
+    //리뷰버튼
+     const writeReview = useCallback(()=>{
+        if(!isLoading && contentsDetail.contentsId) {
+            navigate(`/review/write/${contentsDetail.contentsId}`);
+        }
+    }, [navigate, isLoading, contentsDetail.contentsId]);
     
     
     //Memo
@@ -118,7 +127,8 @@ export default function ContentsDetail() {
                     </div>
                 </div>
                 <div className="text-end mb-3">
-                    <button className="btn btn-warning"><FaPencil className="mb-1 me-1"/>리뷰등록</button>
+                    <button className="btn btn-success" onClick={writeReview}><FaPencil className="mb-1 me-1"/>리뷰등록</button>
+                    <button className="btn btn-warning ms-2"><FaQuestion className="mb-1 me-1" /> 퀴즈</button>
                 </div>    
             </div>
             )}    

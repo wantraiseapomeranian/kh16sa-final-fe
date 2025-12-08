@@ -86,9 +86,10 @@ return(<>
                     {/* home */}
                     <li className="nav-item" onClick={closeMenu}>
                         <Link className="nav-link"  to="/">
-                            <span><FaHome /></span>
+                            <span>홈</span>
                         </Link>
                     </li>
+
                     {/* contents */}
                     <li className="nav-item dropdown ">
                         <a className="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
@@ -120,21 +121,23 @@ return(<>
                 {/* 우측 메뉴 (화면이 좁아지면 합쳐짐) */}
                     {isLogin === true ? (<>  {/* 로그인 시 나와야 하는 화면 */}
                     <li className="nav-item" onClick={closeMenu}>
+                        <Link className="nav-link" to={`/member/mypage/myinfo/${loginId}`}>
+                            <span>마이페이지</span>
+                        </Link>
+                    </li>
+                    <li className="nav-item" onClick={closeMenu}>
                         <Link className="nav-link" onClick={logout}>
-                            <i className="fa-solid fa-right-to-bracket"></i>
                             <span>로그아웃</span>
                         </Link>
                     </li>
                     </>) : (<>  {/* 비로그인 시 나와야 하는 화면 */}
                     <li className="nav-item" onClick={closeMenu}>
                         <Link className="nav-link" to="/member/login">
-                            <i className="fa-solid fa-right-to-bracket"></i>
                             <span>로그인</span>
                         </Link>
                     </li>
                     <li className="nav-item" onClick={closeMenu}>
                         <Link className="nav-link" to="/member/join">
-                            <i className="fa-solid fa-user-plus"></i>
                             <span>회원가입</span>
                         </Link>
                     </li>

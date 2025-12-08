@@ -10,6 +10,10 @@ import ReviewSearch from "./review/ReviewSearch";
 import GenreList from "./Contents/GenreList";
 import ContentsListByGenre from "./Contents/ContentsListByGenre";
 import MemberMypage from "./member/MemberMypage";
+import MemberMyquiz from "./member/MemberMyquiz";
+import MemberMymovie from "./member/MemberMymovie";
+import MemberMyinfo from "./member/MemberMyinfo";
+import MemberMyreview from "./member/MemberMyreview";
 
 export default function Content() {
     return (<>
@@ -35,7 +39,12 @@ export default function Content() {
                     <Route path="/member/join" element={<MemberJoin/>}></Route>
                     <Route path="/member/joinFinish" element={<MemberJoinFinish/>}></Route>
                     <Route path="/member/login" element={<MemberLogin/>}></Route>
-                    <Route path="/member/mypage" element={<MemberMypage/>}></Route>
+                    <Route path="/member/mypage" element={<MemberMypage/>}>
+                        <Route path="/member/mypage/myinfo" element={<MemberMyinfo/>}> </Route>
+                        <Route path="/member/mypage/myquiz" element={<MemberMyquiz/>}> </Route>
+                        <Route path="/member/mypage/mymovie" element={<MemberMymovie/>}> </Route>
+                        <Route path="/member/mypage/myreview" element={<MemberMyreview/>}> </Route>
+                    </Route>
 
                     {/* 리뷰 페이지 */} 
                     <Route path="/review/insert" element={<ReviewWrite/>}></Route>

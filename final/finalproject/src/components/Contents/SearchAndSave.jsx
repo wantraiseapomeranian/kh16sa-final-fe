@@ -1,6 +1,8 @@
 import axios from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react"
 import "./SearchAndSave.css";
+import { Outlet, useNavigate } from "react-router-dom";
+
 
 
 const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
@@ -26,6 +28,8 @@ export default function SearchAndSave() {
     const [isLoading, setIsLoading] = useState(false);
     //상태 메세지 state
     const [statusMessage, setStatusMessage] = useState("");
+
+    const navigate = useNavigate();
 
     //callback
     
@@ -85,6 +89,8 @@ export default function SearchAndSave() {
 
             //응답 데이터 상세정보 업데이트
             setContentsDetail(response.data);
+            setIsSelect(true);
+            navigate("review");
         }
         catch (error) {
             console.error("저장 API 오류 : ", error);
@@ -93,7 +99,7 @@ export default function SearchAndSave() {
         finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [navigate]);
     
     //[포스터 이미지 url 생성 함수]
     const getPosterUrl = useCallback((path) => {
@@ -230,6 +236,13 @@ export default function SearchAndSave() {
                     </div>
                 </div>
             )}
+        </div>
+
+        {/* 리뷰 중첩라우팅 적용 */}
+        <div className="row mt-4">
+            <div className="col">
+                <Outlet/>
+            </div>
         </div>
     </>)
 }

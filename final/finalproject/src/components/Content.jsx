@@ -28,13 +28,14 @@ export default function Content() {
                     <Route path="/contents/test2" element={<SearchAndSave/>}></Route>
                     <Route path="/contents/genreList" element={<GenreList/>}></Route>
                     <Route path="/contents/listByGenre/:genreName" element={<ContentsListByGenre/>}></Route>
+                    <Route path="/contents/test2/review" element={<ReviewWrite/>}></Route>
 
                     {/* 회원 페이지 */}
                     <Route path="/member/join" element={<MemberJoin/>}></Route>
                     <Route path="/member/joinFinish" element={<MemberJoinFinish/>}></Route>
                     <Route path="/member/login" element={<MemberLogin/>}></Route>
 
-                    {/* 리뷰 페이지 */}
+                    {/* 리뷰 페이지 */} 
                     <Route path="/review/insert" element={<ReviewWrite/>}></Route>
                     <Route path="/review/search" element={<ReviewSearch/>}></Route>
 

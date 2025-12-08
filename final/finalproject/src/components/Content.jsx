@@ -26,7 +26,7 @@ export default function Content() {
                     {/* contents */}
                     <Route path="/contents/test" element={<Test/>}></Route>
                     <Route path="/contents/test2" element={<SearchAndSave/>}>
-                        <Route path="/contents/test2/review" element={<ReviewWrite/>}></Route>
+                        <Route path="/contents/test2/review/:contentsId" element={<ReviewWrite/>}></Route>
                     </Route>
 
                    {/* 회원 페이지 */}

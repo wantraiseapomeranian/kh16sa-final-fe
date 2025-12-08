@@ -1,12 +1,12 @@
 import { useAtom } from "jotai"
 import { loginIdState, loginLevelState } from "../../utils/jotai"
 import "./MemberMypage.css";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useParams } from "react-router-dom";
 
 
 export default function MemberMypage(){
     //통합 state
-    const [loginid, setLoginId] = useAtom(loginIdState);
+    const {loginId} = useParams();
     const [loginLevel, setLoginLevel] = useAtom(loginLevelState);
 
 

@@ -1,5 +1,5 @@
 import axios  from "axios";
-import { accessTokenState, refreshTokenState } from "../jotai";
+import { accessTokenState, clearLoginState, refreshTokenState } from "../jotai";
 import { getDefaultStore } from "jotai";
 
 // store 가져오기

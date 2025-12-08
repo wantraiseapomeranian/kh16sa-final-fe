@@ -3,22 +3,23 @@ import { loginIdState, loginLevelState } from "../../utils/jotai"
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "./MemberMypage.css";
+import { Link, useParams } from "react-router-dom";
 
 
 
 export default function MemberMyinfo(){
-    const [loginid, setLoginId] = useAtom(loginIdState);
+    const {loginId} = useParams();
     const [memberData, setMemberData] = useState({});
     //effect
     useEffect(()=>{
-        if(loginid === null) return;
-        axios.get(`/member/mypage/${loginid}`)
+        if(loginId === null) return;
+        axios.get(`/member/mypage/${loginId}`)
         .then(response=>{
             setMemberData(response.data);
         })
-    },[loginid]);
+    },[]);
     return(<>
-        <h1 className="text-center"> {loginid}님의 정보</h1>
+        <h1 className="text-center"> {loginId}님의 정보</h1>
 
         <div className="mypage-table-wrapper">
         <table className="table table-hover mypage-table">
@@ -53,6 +54,13 @@ export default function MemberMyinfo(){
                 </tr>
             </tbody>
         </table>
+        <div className="row mt-2">
+            <div className="col">
+                    <Link to={`/member/edit/${loginId}`} className="btn btn-secondary me-2">기본정보 수정</Link>
+                    <Link to="#" className="btn btn-secondary me-2">비밀번호 변경</Link>
+                    <Link to="#" className="btn btn-danger">탈퇴</Link>
+            </div>
+        </div>
         </div>
 
     </>)

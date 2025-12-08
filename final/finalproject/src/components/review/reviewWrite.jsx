@@ -128,7 +128,7 @@ export default function ReviewWriter() {
                                                         reviewSpoiler: e.target.checked ? "Y" : "N"
                                                     })
                                                 }} />
-                                            <label className="form-check-label spo" for="reviewSpoilerCheck">스포일러 포함</label><br />
+                                            <label className="form-check-label spo" htmlFor="reviewSpoilerCheck">스포일러 포함</label><br />
                                         </div>
                                     </div>
                                 </div>

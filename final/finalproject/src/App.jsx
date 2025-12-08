@@ -2,7 +2,7 @@
 import './App.css'
 import { BrowserRouter } from "react-router-dom"
 import Content from "./components/Content"
-import { Bounce, ToastContainer } from "react-toastify"
+import Menu from './components/Menu'
 
 function App() {
 
@@ -10,25 +10,11 @@ function App() {
     <>
       {/* Router는 주소에 의한 화면 분할을 처리하는 도구이며 설정된 영역 내에서만 작동함 */}
       <BrowserRouter>
-        <div className="container-fluid my-5 pt-5">
-          <Content />
-        </div>
+        <Menu/>
+          <div className="container-fluid my-5 pt-5">
+            <Content/>
+          </div>
       </BrowserRouter>
-
-      {/* 토스트 메세지 컨테이너 */}
-      {/* <ToastContainer
-        position="bottom-right"
-        autoClose={1600}
-        hideProgressBar
-        newestOnTop
-        closeOnClick={false}
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-        transition={Bounce}
-      /> */}
     </>
   )
 }

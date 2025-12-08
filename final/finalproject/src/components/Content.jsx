@@ -1,16 +1,10 @@
 import { Route, Routes } from "react-router-dom";
 import Test from "./Contents/Test";
-<<<<<<< HEAD
-import SearchAndSave from "./Contents/SearchAndSave";
-=======
 import Home from "./Home";
->>>>>>> origin/251208-lim
 import MemberJoin from "./member/MemberJoin";
 import SearchAndSave from "./Contents/SearchAndSave";
-
 import MemberJoinFinish from "./member/MemberJoinFinish";
 import MemberLogin from "./member/MemberLogin";
-
 import ReviewWrite from "./review/ReviewWrite";
 import ReviewSearch from "./review/ReviewSearch";
 import GenreList from "./Contents/GenreList";

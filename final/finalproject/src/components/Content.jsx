@@ -9,6 +9,7 @@ import ReviewWrite from "./review/ReviewWrite";
 import ReviewSearch from "./review/ReviewSearch";
 import GenreList from "./Contents/GenreList";
 import ContentsListByGenre from "./Contents/ContentsListByGenre";
+import MemberMypage from "./member/MemberMypage";
 
 export default function Content() {
     return (<>
@@ -27,13 +28,14 @@ export default function Content() {
                     <Route path="/contents/test" element={<Test/>}></Route>
                     <Route path="/contents/test2" element={<SearchAndSave/>}></Route>
                     <Route path="/contents/genreList" element={<GenreList/>}></Route>
-                    <Route path="/contents/listByGenre/:genreName" element={<ContentsListByGenre/>}></Route>
+                    <Route path="/contents/genreList" element={<ContentsListByGenre/>}></Route>
                     <Route path="/contents/test2/review" element={<ReviewWrite/>}></Route>
 
                     {/* 회원 페이지 */}
                     <Route path="/member/join" element={<MemberJoin/>}></Route>
                     <Route path="/member/joinFinish" element={<MemberJoinFinish/>}></Route>
                     <Route path="/member/login" element={<MemberLogin/>}></Route>
+                    <Route path="/member/mypage" element={<MemberMypage/>}></Route>
 
                     {/* 리뷰 페이지 */} 
                     <Route path="/review/insert" element={<ReviewWrite/>}></Route>

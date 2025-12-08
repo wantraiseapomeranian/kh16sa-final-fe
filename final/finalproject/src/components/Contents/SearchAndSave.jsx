@@ -1,5 +1,8 @@
 import axios from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react"
+import "./SearchAndSave.css";
+import { Outlet, useNavigate } from "react-router-dom";
+
 
 
 const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
@@ -25,6 +28,8 @@ export default function SearchAndSave() {
     const [isLoading, setIsLoading] = useState(false);
     //상태 메세지 state
     const [statusMessage, setStatusMessage] = useState("");
+
+    const navigate = useNavigate();
 
     //callback
     
@@ -53,7 +58,7 @@ export default function SearchAndSave() {
             setResultList(response.data);
 
             if (response.data.length === 0) {
-                setStatusMessage(`"${query}" 와 일치하는 검색 결과를 찾을 수 없습니다.`);
+                setStatusMessage(`"${query}" 와 일치하는 검색 결과를 찾을 수 없습니다. 제목과 띄어쓰기를 확인해주세요`);
             }
             else {
                 setStatusMessage(`"${query}" 에 대한 검색 결과 : ${response.data.length} 개`);
@@ -84,6 +89,8 @@ export default function SearchAndSave() {
 
             //응답 데이터 상세정보 업데이트
             setContentsDetail(response.data);
+            setIsSelect(true);
+            navigate("review");
         }
         catch (error) {
             console.error("저장 API 오류 : ", error);
@@ -92,7 +99,7 @@ export default function SearchAndSave() {
         finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [navigate]);
     
     //[포스터 이미지 url 생성 함수]
     const getPosterUrl = useCallback((path) => {
@@ -120,6 +127,12 @@ export default function SearchAndSave() {
             </span>
         ));
     }, [contentsDetail.genreNames]);
+
+    //방영일 날짜 형식 변경
+    const formattedDate = useMemo(()=> {
+        const formattedDate = contentsDetail.contentsReleaseDate.split(" ")[0];
+        return formattedDate;
+    }, [contentsDetail.contentsReleaseDate]);
 
 
     //render
@@ -153,10 +166,10 @@ export default function SearchAndSave() {
                 {/* 검색결과 리스트 */}
                 <div className="row">    
                     <div className="col">
-                        <ul className="list-group">
+                        
                             {resultList.length > 0 ? (
                                 resultList.map(result=>(
-                                <li className="list-group-item" key={result.contentsId} 
+                                <div className="result-wrapper" key={result.contentsId} 
                                     onClick={() => handleSelectAndSave(result)}>
                                     <div className="row">
                                         <div className="col-4 col-sm-3">
@@ -166,13 +179,13 @@ export default function SearchAndSave() {
                                         </div>
                                         <div className="col-8 col-sm-9">
                                             <h4>{result.title}</h4>
-                                            <p className="text-muted">{result.type} / {result.releaseDate} 방영 </p>
+                                            <p >{result.type} / {result.releaseDate} 방영 </p>
                                         </div>
                                     </div>
-                                </li>
+                                </div>
                             )) 
                         ) : (<span> 검색어를 입력하고 컨텐츠를 찾아보세요 </span>)}
-                        </ul>
+                        
                     </div>
                 </div>
             </div>
@@ -188,7 +201,7 @@ export default function SearchAndSave() {
             )}
             {/* 상세정보 카드 */}
             {!isLoading && contentsDetail.contentsId && (
-                <div className="row mt-4 p-4 shadow rounded">
+                <div className="row p-3 shadow rounded">
                     {/* 이미지 영역 */}
                     <div className="col-4 col-sm-3">
                         <img src={getPosterUrl(contentsDetail.contentsPosterPath)} className="w-75 h-75"
@@ -206,7 +219,7 @@ export default function SearchAndSave() {
                             장르 : {renderGenres} 
                         </div>
                         <div className="text-muted">
-                            방영일 : {contentsDetail.contentsReleaseDate}
+                            방영일 : {formattedDate}
                         </div>
                         <div className="text-muted">
                             평점 : {contentsDetail.contentsVoteAverage.toFixed(1)} / 10
@@ -223,6 +236,13 @@ export default function SearchAndSave() {
                     </div>
                 </div>
             )}
+        </div>
+
+        {/* 리뷰 중첩라우팅 적용 */}
+        <div className="row mt-4">
+            <div className="col">
+                <Outlet/>
+            </div>
         </div>
     </>)
 }

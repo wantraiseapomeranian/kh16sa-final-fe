@@ -34,6 +34,11 @@ export default function WriteReview() {
     //상태 메세지 state
     const [statusMessage, setStatusMessage] = useState("");
 
+    const reviewData = {
+            ...review,
+            contentsId: contentsId
+        };
+
 
     //effect
     useEffect(() => {
@@ -69,7 +74,7 @@ export default function WriteReview() {
         }
 
         try {
-            const response = await axios.post("/review/insert", review);
+            const response = await axios.post("/review/", reviewData);
             if (response.status === 200) {
                 toast.success("등록 완료");
                 setReview({

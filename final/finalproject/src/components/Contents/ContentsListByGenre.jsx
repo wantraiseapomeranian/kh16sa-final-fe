@@ -37,7 +37,7 @@ export default function ContentsListByGenre() {
             const percent = getScrollPercent();
 
             //if(percent >= 90 && loading.current === false) {//90%↑ + 로딩중이 아닌경우 (문제없음)
-            if (percent >= 80 && loading.current === false) {//100% + 로딩중이 아닌 경우 (?)
+            if (percent >= 90 && loading.current === false) {//100% + 로딩중이 아닌 경우 (?)
                 setPage(prev => prev + 1);//page를 직전값+1로 변경 (=다음페이지)
             }
         }, 500);
@@ -140,7 +140,7 @@ export default function ContentsListByGenre() {
                 ) : (
                     contentsList.map((content) => (
 
-                        <div className="col-3 mb-4" key={content.contentsId}>
+                        <div className="col-6 col-md-3 mb-3" key={content.contentsId}>
                             <div className="card h-100 bg-dark text-white border-secondary">
                                 <Link className="text-decoration-none link-body-emphasis" to={`/contents/detail/${content.contentsId}`} >
                                     <img

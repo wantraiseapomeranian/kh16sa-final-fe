@@ -4,7 +4,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom"
 //Daum 우편번호/주소검색 API
 import { useDaumPostcodePopup } from 'react-daum-postcode';
-import "./MemberJoin.css";
+import "./Member.css";
 
 export default function member(){
     //도구
@@ -307,7 +307,7 @@ export default function member(){
     //render
     return (<>
         <div className="d-flex justify-content-center">
-        <div className="memberJoin-form">
+        <div className="member-form">
         <h2>회원가입</h2>
 
         {/* 아이디 */}

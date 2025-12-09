@@ -2,7 +2,7 @@ import { useAtom, useSetAtom } from "jotai"
 import { clearLoginState, loginIdState, loginLevelState } from "../../utils/jotai"
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import "./MemberMypage.css";
+import "./Member.css";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 

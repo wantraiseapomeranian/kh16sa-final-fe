@@ -36,7 +36,6 @@ export default function Content() {
                     
                     {/* contents */}
                     <Route path="/contents/test" element={<Test/>}></Route>
-
                     <Route path="/contents/searchTitle" element={<SearchContents/>}></Route>
                     <Route path="/contents/genreList" element={<GenreList/>}></Route>
                     <Route path="/contents/listByGenre/:genreName" element={<ContentsListByGenre/>}></Route>

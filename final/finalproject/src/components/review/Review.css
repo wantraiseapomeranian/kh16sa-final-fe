@@ -29,12 +29,12 @@
     font-size: 18px;
 }
 .btn-success, .d-grid {
-    padding: 1em !important;
-    font-size: 20px !important;
-    font-weight: bold !important;
-    border-radius: 0.8em !important;
-    background-color: rgb(15, 126, 0) !important;
-    border-color: rgb(15, 126, 0) !important;
+    padding: 1em; 
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 0.8em;
+    background-color: rgb(15, 126, 0);
+    border-color: rgb(15, 126, 0);
 }
 
 /* 켜짐 상태 (Checked) 트랙 배경색 변경 */

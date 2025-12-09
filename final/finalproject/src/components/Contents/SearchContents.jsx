@@ -5,6 +5,7 @@ import { FaQuestion } from "react-icons/fa";
 import { FaBookmark, FaHeart, FaPencil } from "react-icons/fa6";
 import { RiArrowGoBackFill } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
+import "./SearchAndSave.css";
 
 const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
@@ -101,8 +102,8 @@ export default function SearchContents() {
         }
     }, []);
 
-    const writeReview = useCallback(()=>{
-        if(!isLoading && contentsDetail.contentsId) {
+    const writeReview = useCallback(() => {
+        if (!isLoading && contentsDetail.contentsId) {
             navigate(`/review/write/${contentsDetail.contentsId}`);
         }
     }, [navigate, isLoading, contentsDetail.contentsId]);
@@ -133,12 +134,12 @@ export default function SearchContents() {
             </span>
         ));
     }, [contentsDetail.genreNames]);
-        //방영일 날짜 형식 변경
-    const formattedDate = useMemo(()=> {
+    //방영일 날짜 형식 변경
+    const formattedDate = useMemo(() => {
         const formattedDate = contentsDetail.contentsReleaseDate.split(" ")[0];
         return formattedDate;
-    }, [contentsDetail.contentsReleaseDate]);    
-    
+    }, [contentsDetail.contentsReleaseDate]);
+
 
     return (<>
 
@@ -155,7 +156,7 @@ export default function SearchContents() {
                                 placeholder="제목 입력" onChange={changeStrValue}
                                 onKeyDown={(e) => { if (e.key === "Enter") handleSearch(); }} />
                             {/* 검색 버튼 */}
-                            <button className="btn btn-success ms-2" onClick={handleSearch}
+                            <button className="search btn btn-success ms-2" onClick={handleSearch}
                                 disabled={isLoading || query.trim().length === 0}>
                                 검색
                             </button>
@@ -163,7 +164,7 @@ export default function SearchContents() {
                     </div>
 
                     {/* 상태 메세지 */}
-                    <div className="row mt-2">
+                    <div className="row mt-5">
                         <div className="col">
                             <p>{statusMessage}</p>
                         </div>
@@ -172,26 +173,29 @@ export default function SearchContents() {
                     {/* 검색결과 리스트 */}
                     <div className="row">
                         <div className="col">
-                            <ul className="list-group">
-                                {resultList.length > 0 ? (
-                                    resultList.map(result => (
-                                        <li className="list-group-item" key={result.contentsId}
-                                            onClick={() => handleSelectAndSave(result)}>
-                                            <div className="row">
-                                                <div className="col-4 col-sm-3">
-                                                    {/* 포스터 이미지 */}
-                                                    <img src={getPosterUrl(result.posterPath)} className="w-50 h-75"
-                                                        alt={`${result.title} 포스터`} />
-                                                </div>
-                                                <div className="col-8 col-sm-9">
-                                                    <h4>{result.title}</h4>
-                                                    <p className="text-muted">{result.type} / {result.releaseDate} 방영 </p>
+
+                            {resultList.length > 0 ? (
+                                resultList.map(result => (
+                                    <div className="simple-item" key={result.contentsId}
+                                        onClick={() => handleSelectAndSave(result)}>
+                                        <div className="d-flex align-items-center">
+                                            {/* 작은 썸네일 */}
+                                            <img src={getPosterUrl(result.posterPath)}
+                                                alt={result.title}
+                                                style={{ width: "60px", height: "85px", objectFit: "cover", borderRadius: "4px" }}
+                                                className="me-3" />
+                                            {/* 정보 */}
+                                            <div style={{ flex: 1, minWidth: 0 }}> {/* minWidth: 0은 텍스트 말줄임표 필수 속성 */}
+                                                <div className="text-muted fw-bold text-truncate">{result.title}</div>
+                                                <div className="text-muted small">
+                                                    {result.type} • {result.releaseDate}
                                                 </div>
                                             </div>
-                                        </li>
-                                    ))
-                                ) : (<span> 검색어를 입력하고 컨텐츠를 찾아보세요 </span>)}
-                            </ul>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (<span> 검색어를 입력하고 컨텐츠를 찾아보세요 </span>)}
+
                         </div>
                     </div>
                 </div>
@@ -200,57 +204,57 @@ export default function SearchContents() {
             {/* 상세정보 영역 (isSelect가 true일 때만 표시)*/}
             <div>
                 {/* 상세정보 카드 */}
-                        {!isLoading && contentsDetail.contentsId && (
-                            <div className="row p-3 shadow rounded">
-                                {/* 이미지 영역 */}
-                                <div className="col-4 col-sm-3 p-3 bg-secondary text-light rounded">
-                                    <img src={getPosterUrl(contentsDetail.contentsPosterPath)} style={{ height: "350px", objectFit: "cover"}}
-                                        alt={`${contentsDetail.contentsTitle} 포스터`} className="text-center w-100" />
-                                    <div>
-                                        <div className="mt-3">
-                                            <span>{contentsDetail.contentsType} / {contentsDetail.contentsRuntime} 분</span>
-                                        </div>
-                                        <div>
-                                            장르 : {renderGenres} 
-                                        </div>
-                                        <div>
-                                            방영일 : {formattedDate}
-                                        </div>
-                                        <div>
-                                            평점 : {contentsDetail.contentsVoteAverage.toFixed(1)} / 10
-                                        </div>        
-                                    </div>
+                {!isLoading && contentsDetail.contentsId && (
+                    <div className="row p-3 dark-bg-wrapper shadow rounded text-light">
+                        <div className="text-end">
+                            <span className="badge bg-danger px-3 py-2 btn me-3"><h5><FaBookmark /></h5></span>
+                            <button onClick={() => setIsSelect(false)} className="btn btn-warning px-3 py-2"><h5><RiArrowGoBackFill /></h5></button>
+                        </div>
+                        {/* 이미지 영역 */}
+                        <div className="col-4 col-sm-3 p-4 black-bg-wrapper text-light rounded">
+                            <img src={getPosterUrl(contentsDetail.contentsPosterPath)} style={{ height: "350px", objectFit: "cover" }}
+                                alt={`${contentsDetail.contentsTitle} 포스터`} className="text-center w-100" />
+                            <div>
+                                <div className="mt-3">
+                                    <span>{contentsDetail.contentsType} • {contentsDetail.contentsRuntime} 분</span>
                                 </div>
-                                {/* 텍스트 영역 */}
-                                <div className="col-7 col-sm-8 ms-4 mt-2">
-                                    <div className="ms-5 text-end">
-                                        <span className="badge bg-danger px-3 py-2 btn me-3"><h5><FaBookmark/></h5></span>
-                                        <button onClick={()=>setIsSelect(false)} className="btn btn-warning px-3 py-2"><h5><RiArrowGoBackFill /></h5></button>    
-                                    </div>
-                                    
-                                    <h3>{contentsDetail.contentsTitle}</h3>
-                                    
-                                    <div className="mt-4">
-                                        <h5>줄거리</h5>
-                                        <span className="text-muted break-word">
-                                            {contentsDetail.contentsOverview}
-                                        </span>
-                                    </div>
-                                    <div className="mt-3">
-                                        <h5>감독</h5>
-                                        <p>{contentsDetail.contentsDirector}</p>
-                                    </div>
-                                    <div className="mt-3">
-                                        <h5>주연</h5>
-                                        <p>{contentsDetail.contentsMainCast}</p>
-                                    </div>
+                                <div>
+                                    장르 : {renderGenres}
                                 </div>
-                                <div className="text-end mb-3">
-                                    <button className="btn btn-success" onClick={writeReview}><FaPencil className="mb-1 me-1"/>리뷰등록</button>
-                                    <button className="btn btn-warning ms-2"><FaQuestion className="mb-1 me-1" /> 퀴즈</button>
-                                </div>    
+                                <div>
+                                    방영일 : {formattedDate}
+                                </div>
+                                <div>
+                                    평점 : {contentsDetail.contentsVoteAverage.toFixed(1)} / 10
+                                </div>
                             </div>
-                            )}    
+                        </div>
+                        {/* 텍스트 영역 */}
+                        <div className="col-7 col-sm-8 ms-4 mt-2">
+
+                            <h3>{contentsDetail.contentsTitle}</h3>
+
+                            <div className="mt-4">
+                                <h5>줄거리</h5>
+                                <span className="break-word">
+                                    {contentsDetail.contentsOverview}
+                                </span>
+                            </div>
+                            <div className="mt-3">
+                                <h5>감독</h5>
+                                <p>{contentsDetail.contentsDirector}</p>
+                            </div>
+                            <div className="mt-3">
+                                <h5>주연</h5>
+                                <p>{contentsDetail.contentsMainCast}</p>
+                            </div>
+                        </div>
+                        <div className="text-end mb-3">
+                            <button className="search btn btn-success" onClick={writeReview}><FaPencil className="mb-1 me-1" />리뷰등록</button>
+                            <button className="btn btn-warning ms-2"><FaQuestion className="mb-1 me-1" /> 퀴즈</button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
 

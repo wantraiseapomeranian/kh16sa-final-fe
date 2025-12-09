@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { FaBookmark, FaHeart, FaPencil } from "react-icons/fa6";
 import { FaQuestion } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
+import "./SearchAndSave.css"
 
 const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
@@ -83,14 +84,17 @@ export default function ContentsDetail() {
         )}
         {/* 상세정보 카드 */}
         {!isLoading && contentsDetail.contentsId && (
-            <div className="row p-3 shadow rounded">
+            <div className="row p-3 shadow rounded dark-bg-wrapper">
+                <div className="text-end">
+                    <span className="badge bg-danger px-3 btn"><h5><FaBookmark/></h5></span>    
+                </div>
                 {/* 이미지 영역 */}
-                <div className="col-4 col-sm-3 p-3 bg-secondary text-light rounded">
-                    <img src={getPosterUrl(contentsDetail.contentsPosterPath)} style={{ height: "350px", objectFit: "cover"}}
+                <div className="col-4 col-sm-3 p-4 black-bg-wrapper text-light rounded">
+                    <img src={getPosterUrl(contentsDetail.contentsPosterPath)} style={{ height: "350px", objectFit: "cover", borderRadius: "4px", }}
                         alt={`${contentsDetail.contentsTitle} 포스터`} className="text-center w-100" />
                     <div>
                         <div className="mt-3">
-                            <span>{contentsDetail.contentsType} / {contentsDetail.contentsRuntime} 분</span>
+                            <span>{contentsDetail.contentsType} • {contentsDetail.contentsRuntime} 분</span>
                         </div>
                         <div>
                             장르 : {renderGenres} 
@@ -104,16 +108,13 @@ export default function ContentsDetail() {
                     </div>
                 </div>
                 {/* 텍스트 영역 */}
-                <div className="col-7 col-sm-8 ms-4 mt-2">
-                    <div className="ms-5 text-end">
-                        <span className="badge bg-danger px-3 btn"><h5><FaBookmark/></h5></span>    
-                    </div>
-                    
-                    <h3>{contentsDetail.contentsTitle}</h3>
+                <div className="col-7 col-sm-8 ms-4 mt-2 text-light">
+                
+                    <h3 className="text-light">{contentsDetail.contentsTitle}</h3>
                     
                     <div className="mt-4">
                         <h5>줄거리</h5>
-                        <span className="text-muted break-word">
+                        <span className="break-word">
                             {contentsDetail.contentsOverview}
                         </span>
                     </div>
@@ -127,7 +128,7 @@ export default function ContentsDetail() {
                     </div>
                 </div>
                 <div className="text-end mb-3">
-                    <button className="btn btn-success" onClick={writeReview}><FaPencil className="mb-1 me-1"/>리뷰등록</button>
+                    <button className="search btn btn-success" onClick={writeReview}><FaPencil className="mb-1 me-1"/>리뷰등록</button>
                     <button className="btn btn-warning ms-2"><FaQuestion className="mb-1 me-1" /> 퀴즈</button>
                 </div>    
             </div>

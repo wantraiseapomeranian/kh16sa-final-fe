@@ -16,6 +16,8 @@ function App() {
           </div>
       </BrowserRouter>
       
+
+
       {/* 토스트 메세지 컨테이너 */}
       <ToastContainer
         position="bottom-right"
@@ -30,6 +32,7 @@ function App() {
         theme="colored"
         transition={Bounce}
       />
+
     </>
   )
 }

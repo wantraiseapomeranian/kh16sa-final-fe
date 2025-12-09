@@ -41,11 +41,9 @@ export default function Content() {
                     
                     {/* contents */}
                     <Route path="/contents/test" element={<Test/>}></Route>
-
                     <Route path="/contents/test2" element={<SearchAndSave/>}> 
                         <Route path="/contents/test2/review/:contentsId" element={<ReviewWrite/>}></Route>
                     </Route>
-
                     <Route path="/contents/searchTitle" element={<SearchContents/>}></Route>
                     <Route path="/contents/genreList" element={<GenreList/>}></Route>
                     <Route path="/contents/listByGenre/:genreName" element={<ContentsListByGenre/>}></Route>

@@ -145,7 +145,7 @@ export default function member(){
 
     //render
     return (<>
-        <div className="d-flex justify-content-center">
+
         <div className="member-form ">
         <h2 className="text-center">회원 기본정보 수정</h2>
         <hr/>
@@ -239,6 +239,6 @@ export default function member(){
             </div>
         </div>
 </div>
-</div>
+
     </>)
 }

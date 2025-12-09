@@ -66,14 +66,13 @@ export default function MemberEditPassword(){
 
     //render
     return (<>
-    <div className="d-flex justify-content-center">
     <div className="member-form">
         <h2 className="text-center">비밀번호 변경</h2>
         <hr/>
 
         {/* 비밀번호 */}
         <div className="row">
-            <label className="col-sm-3 col-form-label">
+            <label className="col-md-3 col-form-label">
                     비밀번호<FaAsterisk className="text-danger"/>
                 {showPassword === true ? (
                         <FaEye className="ms-2" onClick={e=>setShowPassword(false)}/>
@@ -81,7 +80,7 @@ export default function MemberEditPassword(){
                         <FaEyeSlash className="ms-2"onClick={e=>setShowPassword(true)}/>
                     ) }
             </label>
-            <div className="col-sm-9">
+            <div className="col-lg-6 col-md-9">
                 <input type={showPassword===true ? "text" : "password"} className={`form-control ${memberClass.memberPw}`} 
                             name="memberPw" value={member.memberPw}
                             onChange={changeStrValue}
@@ -93,8 +92,8 @@ export default function MemberEditPassword(){
         </div>
         {/* 비밀번호 확인 */}
         <div className="row mt-1">
-            <label className="col-sm-3 col-form-label"></label>
-            <div className="col-sm-9">
+            <label className="col-md-3 col-form-label"></label>
+            <div className="col-lg-6 col-md-9">
                 <input type={showPassword===true ? "text" : "password"}  className={`form-control ${memberClass.memberPwCheck}`} 
                             name="memberPwCheck" value={member.memberPwCheck}
                             onChange={changeStrValue}
@@ -118,6 +117,5 @@ export default function MemberEditPassword(){
             </div>
         </div>
     </div>
-</div>
     </>)
 }

@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { quizApi } from "../../api/quizApi";
+import { useState, useEffect, useCallback } from "react";
+import { quizApi } from "./api/quizApi";
 import Swal from "sweetalert2";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FaRegCircle, FaXmark } from "react-icons/fa6";
@@ -76,14 +76,14 @@ export default function QuizCreateModal({ show, onClose, contentsId }) {
 
         //화면에 찍기 위해 만든 임시 배열
         const quizDto = {
-            quizMovieId: contentsId,
+            quizContentsId: contentsId,
             quizQuestion: question,
             quizQuestionType: quizType,
             quizQuestionOption1: options[1],
             quizQuestionOption2: options[2],
             quizQuestionOption3: quizType === 'MULTI' ? options[3] : null,
             quizQuestionOption4: quizType === 'MULTI' ? options[4] : null,
-            quizAnswer: options[correctOptionIndex]
+            quizAnswer: String(correctOptionIndex)
         };
 
         //퀴즈 등록 시도
@@ -181,7 +181,6 @@ export default function QuizCreateModal({ show, onClose, contentsId }) {
                                             {quizType === 'OX' ? (
                                                 <div className={`form-control fw-bold quiz-ox-box ${idx === 1 ? 'text-success' : 'text-danger'}`}>
                                                     {idx === 1 ? <FaRegCircle className="me-2" /> : <FaXmark className="me-2" />}
-                                                    {idx === 1 ? "O" : "X"}
                                                 </div>
                                             ) : (
                                                 //4지선다: 사용자 입력창

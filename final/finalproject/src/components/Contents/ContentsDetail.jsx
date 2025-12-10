@@ -1,8 +1,8 @@
 import axios from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { FaBookmark, FaHeart, FaPencil } from "react-icons/fa6";
+import { FaBookmark, FaChevronUp, FaHeart, FaPencil } from "react-icons/fa6";
 import { FaQuestion } from "react-icons/fa";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Outlet, useLocation } from "react-router-dom";
 import "./SearchAndSave.css"
 
 const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
@@ -20,6 +20,11 @@ export default function ContentsDetail() {
     const {contentsId} = useParams();
 
     const navigate = useNavigate();
+
+    const location = useLocation();
+
+    //현재 위치가 /contents/detail/:contentsId/quiz인지 확인
+    const isQuizOpen = location.pathname.includes('/quiz');
 
     //영화 정보 state
     const [contentsDetail, setContentsDetail] = useState(INITIAL_DETAIL);
@@ -58,7 +63,17 @@ export default function ContentsDetail() {
         }
     }, [navigate, isLoading, contentsDetail.contentsId]);
     
-    
+    //퀴즈 버튼
+    const goToQuiz = () => {
+        if (isQuizOpen) {
+            // 이미 열려있으면 -> 닫기
+            navigate(`/contents/detail/${contentsId}`);
+        } else {
+            // 닫혀있으면 -> 열기
+            navigate(`quiz`);
+        }
+    };
+
     //Memo
     //장르 목록을 react 엘리먼트로 변환하는 함수
     const renderGenres = useMemo(()=> {
@@ -84,6 +99,7 @@ export default function ContentsDetail() {
         )}
         {/* 상세정보 카드 */}
         {!isLoading && contentsDetail.contentsId && (
+            <>
             <div className="row p-3 shadow rounded dark-bg-wrapper">
                 <div className="text-end">
                     <span className="badge bg-danger px-3 btn"><h5><FaBookmark/></h5></span>    
@@ -129,9 +145,25 @@ export default function ContentsDetail() {
                 </div>
                 <div className="text-end mb-3">
                     <button className="btn btn-success" onClick={writeReview}><FaPencil className="mb-1 me-1"/>리뷰등록</button>
-                    <button className="btn btn-warning ms-2"><FaQuestion className="mb-1 me-1" /> 퀴즈</button>
+                    <button className="btn btn-warning ms-2" onClick={goToQuiz}>
+                        {isQuizOpen ? (
+                                <>
+                                    <FaChevronUp className="mb-1 me-1" /> 퀴즈 닫기
+                                </>
+                            ) : (
+                                <>
+                                    <FaQuestion className="mb-1 me-1" /> 퀴즈 풀기
+                                </>
+                            )}
+                    </button>
                 </div>    
             </div>
+
+            {/* 중첩 라우팅 자리 */}
+            <div className="mt-4">
+                    <Outlet />
+                </div>
+            </>
             )}    
     </>)
 }

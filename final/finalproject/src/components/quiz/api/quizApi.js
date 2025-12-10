@@ -1,6 +1,4 @@
-// src/axios/index.js에서 설정한 Axios 인스턴스를 가져옵니다.
-// 경로가 맞는지 꼭 확인해주세요! (폴더 구조에 따라 "../axios" 또는 "./axios" 등)
-import axios from "../axios"; 
+import axios from "axios"; 
 
 export const quizApi = {
 

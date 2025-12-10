@@ -101,7 +101,7 @@ export default function Home() {
                         alt={content.contentsTitle}
                         style={{ height: "350px", objectFit: "cover" }}
                     />
-                    <div className="card-body">
+                    <div className="card-body shadow">
                         <h5 className="card-title text-truncate text-light">{content.contentsTitle}</h5>
                         <p className="card-text">
                             <small className="text-secondary">{getFormattedDate(content.contentsReleaseDate)}</small>
@@ -134,7 +134,7 @@ export default function Home() {
             {/* 1. TV 시리즈 슬라이더 */}
             <div className="mb-5 mt-4">
                 <h3 className="mb-3 text-white">📺 인기 TV 시리즈</h3>
-                <div className="p-2 pt-3 rounded shadow" style={{ backgroundColor: "#2c1e3dff" }}>
+                <div className="p-2 pt-3 rounded shadow" style={{ backgroundColor: "#e66767" }}>
                     {tvList.length > 0 ? (
                         <Slider {...settings}>
                             {tvList.map(tv => renderCard(tv))}
@@ -148,7 +148,7 @@ export default function Home() {
             {/* 2. 영화 슬라이더 */}
             <div className="mb-5">
                 <h3 className="mb-3 text-white">🎬 최신 영화</h3>
-                <div className="p-2 pt-3 rounded shadow" style={{ backgroundColor: "#1b2a49ff" }}>
+                <div className="p-2 pt-3 rounded shadow" style={{ backgroundColor: "#e66767" }}>
                     {movieList.length > 0 ? (
                         <Slider {...settings}>
                             {movieList.map(movie => renderCard(movie))}

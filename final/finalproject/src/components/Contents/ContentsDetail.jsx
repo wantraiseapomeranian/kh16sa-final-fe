@@ -11,6 +11,7 @@ import "./SearchAndSave.css"
 import { useAtom } from "jotai";
 import { loginIdState } from "../../utils/jotai";
 import { toast } from "react-toastify";
+import { set } from "lodash";
 
 const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
@@ -39,7 +40,6 @@ export default function ContentsDetail() {
     // 북마크 확인용 state
     const [hasWatchlist, setHasWatchList] = useState(false);
 
-
     //영화 정보 state
     const [contentsDetail, setContentsDetail] = useState(INITIAL_DETAIL);
     //영화 로딩 상태 state
@@ -48,8 +48,6 @@ export default function ContentsDetail() {
     const [statusMessage, setStatusMessage] = useState("");
     //리뷰 목록 state
     const [reviewList, setReviewList] = useState([]);
-    //스포일러 state
-    const [showSpoiler, setShowSpoiler] = useState(false);
 
     //effect
     useEffect(() => {
@@ -67,8 +65,8 @@ export default function ContentsDetail() {
         checkWatchlist();
     }, [loginId, contentsId]);
 
-
     //callback
+    //contents 상세 정보
     const loadData = useCallback(async () => {
         setIsLoading(true);
         const { data } = await axios.get(`/api/tmdb/contents/detail/${contentsId}`);
@@ -76,6 +74,7 @@ export default function ContentsDetail() {
         setIsLoading(false);
     }, []);
 
+    //review 목록
     const loadReview = useCallback(async () => {
         setIsLoading(true);
         try {
@@ -182,12 +181,6 @@ export default function ContentsDetail() {
         }
     };
 
-
-    const toggleSpoiler = () => {
-        setShowSpoiler(true);
-    };
-
-
     //Memo
     //장르 목록을 react 엘리먼트로 변환하는 함수
     const renderGenres = useMemo(() => {
@@ -207,9 +200,88 @@ export default function ContentsDetail() {
         return formattedDate;
     }, [contentsDetail.contentsReleaseDate]);
 
-    const getFormattedDate = useCallback((text) => {
-        return text.substr(0, 10);
-    }, []);
+    /// 리뷰 목록 모듈화
+    function ReviewItem({ review, loginId }) {
+        const [isLiked, setIsLiked] = useState(false);
+        const [likeCount, setLikeCount] = useState(review.reviewLike || 0);
+        const [showSpoiler, setShowSpoiler] = useState(false);
+
+        // 좋아요 확인
+        useEffect(() => {
+            if (loginId) {
+                axios.post("/review/check", null, {
+                    params: { loginId: loginId, reviewNo: review.reviewNo }
+                }).then(res => {
+                    setIsLiked(res.data.like);
+                }).catch(err => console.error(err));
+            }
+        }, [loginId, review.reviewNo]);
+
+        // 좋아요 토글
+        const handleLikeToggle = async () => {
+            if (!loginId) {
+                toast.error("로그인이 필요합니다.");
+                return;
+            }
+            try {
+                const res = await axios.post(`/review/action/${review.reviewNo}/${loginId}`);
+                setIsLiked(res.data.like);
+                setLikeCount(res.data.count);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        // 날짜 포맷
+        const formattedDate = review.reviewEtime
+            ? review.reviewEtime.replace('T', ' ').substring(0, 16)
+            : review.reviewWtime.replace('T', ' ').substring(0, 16);
+
+        return (
+            <div className="row mt-4 p-3 shadow rounded dark-bg-wrapper">
+                <div className="col mt-2">
+                    <div className="d-flex justify-content-between">
+                        <h4 className="text-light">
+                            {review.reviewWriter}{review.reviewEtime ? " (수정됨)" : ""}
+                        </h4>
+                        <p className="text-light">{formattedDate}</p>
+                    </div>
+
+                    {/* 별점 */}
+                    <div className="mt-1">
+                        {[1, 2, 3, 4, 5].map((num) => (
+                            <FaStar key={num} style={{ color: num <= review.reviewRating ? "#ffc107" : "#444", marginRight: "2px" }} />
+                        ))}
+                        <span className="ms-2 text-light small me-2">{review.reviewRating}점</span>
+                        • <span className="ms-2"><FcMoneyTransfer className="me-1" />(가격) 원</span>
+                    </div>
+
+                    {/* 내용 (스포일러) */}
+                    <div className="mt-4">
+                        {review.reviewSpoiler === "Y" && !showSpoiler ? (
+                            <p onClick={() => setShowSpoiler(true)} className="text-danger fw-bold" style={{ cursor: "pointer" }}>
+                                🚨 스포일러가 포함된 리뷰입니다. (클릭하여 보기)
+                            </p>
+                        ) : (
+                            <p className="break-word text-light">{review.reviewText}</p>
+                        )}
+                    </div>
+
+                    {/* 좋아요 버튼 */}
+                    <div className="text-end">
+                        <span
+                            className={`d-inline-block px-2 pb-2 pt-1 rounded ${isLiked ? "bg-danger" : ""}`}
+                            style={{ cursor: "pointer", transition: "0.3s" }}
+                            onClick={handleLikeToggle}
+                        >
+                            <span className="fs-4 me-1">👍🏻</span>
+                            <span className="fs-5">{likeCount}</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     //render
     return (
@@ -290,40 +362,11 @@ export default function ContentsDetail() {
                             </div>
                         </div>
                         {reviewList.map((review) => (
-                            <div className="row mt-4 p-3 shadow rounded dark-bg-wrapper" key={review.reviewNo}>
-                                <div className="col mt-2">
-                                    <div className="d-flex justify-content-between">
-                                        <h4 className="text-light">{review.reviewWriter}{review.reviewEtime ? "  (수정됨)" : ""}</h4>
-                                        <p className="text-light">
-                                            {review.reviewEtime ? getFormattedDate(review.reviewEtime) : getFormattedDate(review.reviewWtime)}
-                                        </p>
-                                    </div>
-                                    <div className="mt-1">
-                                        {[1, 2, 3, 4, 5].map((num) => (
-                                            <FaStar
-                                                key={num}
-                                                style={{ color: num <= review.reviewRating ? "#ffc107" : "#444", marginRight: "2px" }}
-                                            />
-                                        ))}
-                                        <span className="ms-2 text-light small me-2">{review.reviewRating}점</span>
-                                        •
-                                        <span className="ms-2"><FcMoneyTransfer className="me-1" />(가격) 원</span>
-                                    </div>
-                                    <div className="mt-4">
-                                        {review.reviewSpoiler === "Y" && !showSpoiler ? (
-                                            <p onClick={toggleSpoiler} className="text-danger" style={{ cursor: "pointer", fontWeight: "bold" }}>
-                                                🚨 스포일러가 포함된 리뷰입니다. (클릭하여 보기)
-                                            </p>
-                                        ) : (
-                                            <p className="break-word text-light">{review.reviewText}</p>
-                                        )}
-                                    </div>
-                                    <div className="text-end">
-                                        <span className="fs-4 me-1">👍🏻</span>
-                                        <span className="fs-5">{review.reviewLike}</span>
-                                    </div>
-                                </div>
-                            </div>
+                            <ReviewItem 
+                                key={review.reviewNo} 
+                                review={review} 
+                                loginId={loginId} 
+                            />
                         ))}
                     </div>
                 )}

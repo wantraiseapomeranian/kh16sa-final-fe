@@ -144,7 +144,7 @@ export default function ContentsDetail() {
             {!isLoading && contentsDetail.contentsId && (
                 <div className="row p-3 shadow rounded dark-bg-wrapper">
                     <div className="text-end">
-                        <span className="badge bg-danger px-3 btn"><h5><FaBookmark /></h5></span>
+                        <span className="badge bg-danger px-3 btn mt-4"><h5><FaBookmark /></h5></span>
                     </div>
                     {/* 이미지 영역 */}
                     <div className="col-4 col-sm-3 p-4 black-bg-wrapper text-light rounded">

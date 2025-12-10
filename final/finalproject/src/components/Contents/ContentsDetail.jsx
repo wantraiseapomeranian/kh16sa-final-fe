@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { FaBookmark, FaHeart, FaPencil, FaStar } from "react-icons/fa6";
+import { FaBookmark, FaCheck, FaHeart, FaPencil, FaStar } from "react-icons/fa6";
 import { FaQuestion } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import { FcMoneyTransfer } from "react-icons/fc";
@@ -27,6 +27,9 @@ export default function ContentsDetail() {
     const {contentsId} = useParams();
     const navigate = useNavigate();
 
+    // 북마크 확인용 state
+    const [hasWatchlist, setHasWatchList] = useState(false);
+
     //영화 정보 state
     const [contentsDetail, setContentsDetail] = useState(INITIAL_DETAIL);
     //영화 로딩 상태 state
@@ -43,12 +46,18 @@ export default function ContentsDetail() {
         loadData();
         loadReview();
     }, []);
+
     useEffect(() => {
         if (isLoading === true) {
             setStatusMessage("로딩중...")
         }
     }, [isLoading]);
 
+    useEffect(()=>{
+        checkWatchlist();
+    },[loginId, contentsId]);
+
+    
     //callback
     const loadData = useCallback(async () => {
         setIsLoading(true);
@@ -56,6 +65,7 @@ export default function ContentsDetail() {
         setContentsDetail(data);
         setIsLoading(false);
     }, []);
+
     const loadReview = useCallback(async () => {
         setIsLoading(true);
         try {
@@ -71,9 +81,34 @@ export default function ContentsDetail() {
         setIsLoading(false);
     }, []);
 
+    // 북마크 확인(check) 함수
+    const checkWatchlist = useCallback(async()=>{
+        if(loginId ==="")  return;
+        const watchlistCheckData = {
+            watchlistContent: contentsId,
+            watchlistMember: loginId,
+        };
+        console.log(watchlistCheckData);
+        try{
+            const {data} = await axios.post("/watchlist/check", watchlistCheckData);
+            if(data.hasWatchlist===true){
+                console.log("북마크 등록되어있음");
+                setHasWatchList(true);
+                // 기타 추가 기능 구현
+            } else {
+                console.log("북마크 없음");
+                setHasWatchList(false);
+            }
+        }
+        catch(err){
+            console.log("북마크 확인 error");
+            console.error(err);
+        }
+    }, [contentsId, loginId]);
+
         
-    // 북마크 함수
-    const addWatchlist = useCallback(async(e)=>{
+    // 북마크 등록/삭제 함수
+    const changeWatchlist = useCallback(async(e)=>{
         if(loginId ==="") {
             toast.error("로그인이 필요한 기능입니다");
             return;
@@ -83,16 +118,36 @@ export default function ContentsDetail() {
         watchlistMember: loginId,
         watchlistType: "찜",
     };
-     try{
-        await axios.post("/watchlist/",watchlistData);
-        console.log("성공");
-        toast.success("찜목록에 추가되었습니다");
-     }
-     catch(err){
-        console.error(err);
-        toast.error("찜목록 추가 실패");
-     }
-    },[contentsId, loginId]);
+
+    //state 먼저변경
+    const newHasWatchlist = !hasWatchlist;
+    setHasWatchList(newHasWatchlist);
+
+    if(hasWatchlist === true){ // 이미 북마크 등록되어있다면
+        try{
+            await axios.delete(`/watchlist/${contentsId}/${loginId}`);
+            console.log("삭제성공");
+            toast.success("찜목록이 삭제되었습니다");
+        }
+        catch(err){
+            console.error(err);
+            toast.error("찜목록 삭제 실패");
+            setHasWatchList(!newHasWatchlist);
+        }
+    }
+    else{ // 북마크가 되어있지 않다면
+        try{
+            await axios.post("/watchlist/",watchlistData);
+            console.log("등록성공");
+            toast.success("찜목록에 등록되었습니다");
+        }
+        catch(err){
+            console.error(err);
+            toast.error("찜목록 등록 실패");
+            setHasWatchList(!newHasWatchlist);
+        }
+    }
+    },[contentsId, loginId, hasWatchlist]);
 
     //[포스터 이미지 url 생성 함수]
     const getPosterUrl = useCallback((path) => {
@@ -128,13 +183,13 @@ export default function ContentsDetail() {
     const formattedDate = useMemo(() => {
         const formattedDate = contentsDetail.contentsReleaseDate.split(" ")[0];
         return formattedDate;
-    }, [contentsDetail.contentsReleaseDate]);
+        }, [contentsDetail.contentsReleaseDate]);
 
     const getFormattedDate = useCallback((text) => {
         return text.substr(0, 10);
     }, []);
 
-
+    //render
     return (<>
         <div className="container">
             {isLoading && (
@@ -143,9 +198,14 @@ export default function ContentsDetail() {
             {/* 상세정보 카드 */}
             {!isLoading && contentsDetail.contentsId && (
                 <div className="row p-3 shadow rounded dark-bg-wrapper">
-                    <div className="text-end">
-                        <span className="badge bg-danger px-3 btn"><h5><FaBookmark /></h5></span>
-                    </div>
+                    <div className="text-end mt-4"  onClick={changeWatchlist}>
+                        {hasWatchlist === false ? (
+                            <span className="badge bg-danger px-3 btn" style={{cursor: "pointer"}}><h5><FaBookmark className="text-light"/></h5></span>
+                            ) : (
+                            <span className="badge bg-danger px-3 btn" style={{cursor: "pointer"}}><h5><FaBookmark className="text-dark"/></h5></span>
+                        )}
+                           
+                     </div>
                     {/* 이미지 영역 */}
                     <div className="col-4 col-sm-3 p-4 black-bg-wrapper text-light rounded">
                         <img src={getPosterUrl(contentsDetail.contentsPosterPath)} style={{ height: "350px", objectFit: "cover", borderRadius: "4px", }}

@@ -46,6 +46,7 @@ export default function ContentsDetail() {
         loadData();
         loadReview();
     }, []);
+
     useEffect(() => {
         if (isLoading === true) {
             setStatusMessage("로딩중...")
@@ -64,6 +65,7 @@ export default function ContentsDetail() {
         setContentsDetail(data);
         setIsLoading(false);
     }, []);
+
     const loadReview = useCallback(async () => {
         setIsLoading(true);
         try {
@@ -116,6 +118,11 @@ export default function ContentsDetail() {
         watchlistMember: loginId,
         watchlistType: "찜",
     };
+
+    //state 먼저변경
+    const newHasWatchlist = !hasWatchlist;
+    setHasWatchList(newHasWatchlist);
+
     if(hasWatchlist === true){ // 이미 북마크 등록되어있다면
         try{
             await axios.delete(`/watchlist/${contentsId}/${loginId}`);
@@ -125,6 +132,7 @@ export default function ContentsDetail() {
         catch(err){
             console.error(err);
             toast.error("찜목록 삭제 실패");
+            setHasWatchList(!newHasWatchlist);
         }
     }
     else{ // 북마크가 되어있지 않다면
@@ -136,6 +144,7 @@ export default function ContentsDetail() {
         catch(err){
             console.error(err);
             toast.error("찜목록 등록 실패");
+            setHasWatchList(!newHasWatchlist);
         }
     }
     },[contentsId, loginId, hasWatchlist]);
@@ -180,8 +189,7 @@ export default function ContentsDetail() {
         return text.substr(0, 10);
     }, []);
 
-
-
+    //render
     return (<>
         <div className="container">
             {isLoading && (
@@ -190,12 +198,13 @@ export default function ContentsDetail() {
             {/* 상세정보 카드 */}
             {!isLoading && contentsDetail.contentsId && (
                 <div className="row p-3 shadow rounded dark-bg-wrapper">
-                    <div className="text-end"  onClick={changeWatchlist}>
-                        {hasWatchlist===true ? (
-                            <span className="badge bg-danger px-3 btn"><h5><FaBookmark className="text-dark"/></h5></span>    
-                         ) : (
-                         <span className="badge bg-danger px-3 btn"><h5><FaBookmark/></h5></span>    
+                    <div className="text-end mt-4"  onClick={changeWatchlist}>
+                        {hasWatchlist === false ? (
+                            <span className="badge bg-danger px-3 btn" style={{cursor: "pointer"}}><h5><FaBookmark className="text-light"/></h5></span>
+                            ) : (
+                            <span className="badge bg-danger px-3 btn" style={{cursor: "pointer"}}><h5><FaBookmark className="text-dark"/></h5></span>
                         )}
+                           
                      </div>
                     {/* 이미지 영역 */}
                     <div className="col-4 col-sm-3 p-4 black-bg-wrapper text-light rounded">

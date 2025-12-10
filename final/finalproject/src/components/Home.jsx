@@ -93,8 +93,8 @@ export default function Home() {
 
     //[카드 렌더링 함수]
     const renderCard = (content) => (
-        <div key={content.contentsId} className="px-2 mb-2">
-            <div className="card h-100 text-white">
+        <div key={content.contentsId} className="px-2 mb-4 ">
+            <div className="card h-100 text-white content-wrapper" style={{ backgroundColor: "#212529" }}>
                 <Link className="text-decoration-none link-body-emphasis" to={`/contents/detail/${content.contentsId}`}>
                     <img
                         src={getPosterUrl(content.contentsPosterPath)}
@@ -135,7 +135,7 @@ export default function Home() {
             {/* 1. TV 시리즈 슬라이더 */}
             <div className="mb-5 mt-4">
                 <h3 className="mb-3 text-white">📺 인기 TV 시리즈</h3>
-                <div className="p-2 pt-3 rounded shadow">
+                <div className="p-2 pt-3 rounded series-wrapper" >
                     {tvList.length > 0 ? (
                         <Slider {...settings}>
                             {tvList.map(tv => renderCard(tv))}
@@ -149,7 +149,7 @@ export default function Home() {
             {/* 2. 영화 슬라이더 */}
             <div className="mb-5">
                 <h3 className="mb-3 text-white">🎬 최신 영화</h3>
-                <div className="p-2 pt-3 rounded shadow">
+                <div className="p-2 pt-3 rounded  series-wrapper">
                     {movieList.length > 0 ? (
                         <Slider {...settings}>
                             {movieList.map(movie => renderCard(movie))}

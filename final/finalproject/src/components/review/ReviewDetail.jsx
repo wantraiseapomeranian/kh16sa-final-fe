@@ -84,6 +84,7 @@ export default function ReviewDetail() {
             try {
                 setIsLoading(true);
                 const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
+                
                 const { data } = await axios.get(`/review/${contentsId}/${reviewNo}`, { headers });
                 if (data) {
                     setReview({
@@ -97,17 +98,23 @@ export default function ReviewDetail() {
                         reviewEtime: data.reviewEtime
                     });
                     setRating(data.reviewRating);
+                    setLikeCount(data.reviewLike);
                 }
+                if (accessToken && loginId) {
+                    const {data : likeData} = await axios.post(
+                        "/review/check",
+                        null,
+                        {params: {loginId , reviewNo}}
+                    );
+                    setLike(likeData.like);
+                } else {
+                    setLike(false);
+                }
+
             } catch (error) {
-                if (error.response?.status === 401) {
-                    setStatusMessage("로그인이 필요합니다.");
-                }
-                if (error.response?.status === 404) {
-                    setStatusMessage("존재하지 않는 리뷰입니다.");
-                }
-                if (error.response?.status === 500) {
-                    setStatusMessage("리뷰를 불러오는데 실패했습니다.");
-                }
+                if (error.response?.status === 401) setStatusMessage("로그인이 필요합니다.");
+                if (error.response?.status === 404) setStatusMessage("존재하지 않는 리뷰입니다.");
+                if (error.response?.status === 500) setStatusMessage("리뷰를 불러오는데 실패했습니다.");
             } finally {
                 setIsLoading(false);
             }
@@ -188,10 +195,18 @@ export default function ReviewDetail() {
     const [like, setLike] = useState(false);
     const [likeCount, setLikeCount] = useState(reviewData.reviewLike);
 
-    const clickLike = ()=> {
-        //클릭하는거에 따라 좋아요 수가 올라가고 내려가게 
-        setLike(prev => !prev);
-        setLikeCount(prev => like ? prev - 1 : prev + 1);
+    const clickLike = async()=> {
+        if(!loginId) {
+            toast.info("로그인이 필요합니다.");
+            return;
+        }
+        try {
+            const { data } = await axios.post(`/review/action/${reviewNo}/${loginId}`);
+            setLike(data.like);
+            setLikeCount(data.count);
+        } catch (error) {
+            console.error("좋아요 처리 실패", error);
+        }
     }
 
     //render

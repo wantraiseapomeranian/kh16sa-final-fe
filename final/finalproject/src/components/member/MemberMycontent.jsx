@@ -7,7 +7,7 @@ import { FaBookmark } from "react-icons/fa6";
 import { toast } from "react-toastify";
 
 
-export default function MemberMymovie(){
+export default function MemberMycontent(){
     const [loginId, setLoginId] = useAtom(loginIdState);
 
     //state

@@ -18,7 +18,7 @@ return(<>
     <div className="row">
         <div className="col d-flex justify-content-center flex-wrap">
             <Link to={`/member/mypage/myinfo/${loginId}`} className="btn btn-secondary me-2 mt-2">내 정보</Link>
-            <Link to={`/member/mypage/mymovie/${loginId}`} className="btn btn-secondary me-2 mt-2">내 영화</Link>
+            <Link to={`/member/mypage/mycontent/${loginId}`} className="btn btn-secondary me-2 mt-2">내 영화</Link>
             <Link to={`/member/mypage/myquiz/${loginId}`} className="btn btn-secondary me-2 mt-2">내 퀴즈</Link>
             <Link to={`/member/mypage/myreview/${loginId}`} className="btn btn-secondary me-2 mt-2">내 리뷰</Link>
         </div>

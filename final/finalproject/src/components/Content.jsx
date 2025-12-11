@@ -18,7 +18,7 @@ import ContentsDetail from "./Contents/ContentsDetail";
 import SearchContents from "./Contents/SearchContents";
 import MemberMypage from "./member/MemberMypage";
 import MemberMyquiz from "./member/MemberMyquiz";
-import MemberMymovie from "./member/MemberMymovie";
+import MemberMycontent from "./member/MemberMycontent";
 import MemberMyinfo from "./member/MemberMyinfo";
 import MemberMyreview from "./member/MemberMyreview";
 import MemberEdit from "./member/MemberEdit";
@@ -76,7 +76,7 @@ export default function Content() {
                     <Route path="/member/mypage/" element={<MemberMypage/>}>
                         <Route path="/member/mypage/myinfo/:loginId" element={<MemberMyinfo/>}> </Route>
                         <Route path="/member/mypage/myquiz/:loginId" element={<MemberMyquiz/>}> </Route>
-                        <Route path="/member/mypage/mymovie/:loginId" element={<MemberMymovie/>}> </Route>
+                        <Route path="/member/mypage/mycontent/:loginId" element={<MemberMycontent/>}> </Route>
                         <Route path="/member/mypage/myreview/:loginId" element={<MemberMyreview/>}> </Route>
                         <Route path="/member/mypage/edit/:loginId" element={<MemberEdit/>}></Route>
                         <Route path="/member/mypage/password/:loginId" element={<MemberEditPassword/>}></Route>

@@ -1,5 +1,5 @@
 import { useAtom } from "jotai";
-import { loginIdState } from "../../utils/jotai";
+import { loginIdState, loginNicknameState } from "../../utils/jotai";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -8,6 +8,8 @@ import { FaStar } from "react-icons/fa";
 export default function MemberMymovie(){
 //통합 state
 const [loginid, setLoginId] = useAtom(loginIdState);
+const [loginNickname, setLoginNickname] = useAtom(loginNicknameState);
+
 
 //state
 const [hasReview, setHasReview] = useState(false);
@@ -39,7 +41,7 @@ const loadData = useCallback(async ()=>{
 
 //render
 return(<>
-    <h1 className="text-center"> {loginid}님의 리뷰</h1>
+    <h1 className="text-center"> {loginNickname}님의 리뷰</h1>
 
     {hasReview === false && (
         <div className="row mt-4">

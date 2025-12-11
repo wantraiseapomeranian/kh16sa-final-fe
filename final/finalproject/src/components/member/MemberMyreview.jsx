@@ -69,13 +69,13 @@ return(<>
                                 ))}
                                 </div>
                                 <div className="d-flex flex-nowrap justify-content-end">
-                                    <span>평가가치 : <span className="text-danger fs-5">{review.reviewPrice}</span> 원</span>
+                                    <span className="text-truncate">평가가치 : <span className="text-danger fs-5">{review.reviewPrice}</span> 원</span>
                                 </div>
                             </div>
                             <div  style={{ height: "80px"}}></div>
                             <div className="mt-2 d-flex justify-content-between">
-                                <span className="text-warning">좋아요: {review.reviewLike}</span>
-                                <span className="text-secondary">{getFormattedDate(review.reviewWtime)}</span>
+                                <span className="text-warning text-truncate">좋아요: {review.reviewLike}</span>
+                                <span className="text-secondary text-truncate">{getFormattedDate(review.reviewWtime)}</span>
                             </div>
                     </div>         
                 </div>

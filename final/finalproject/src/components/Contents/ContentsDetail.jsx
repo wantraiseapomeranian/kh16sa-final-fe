@@ -298,11 +298,11 @@ export default function ContentsDetail() {
                 {!isLoading && contentsDetail.contentsId && (
                     <>
                         <div className="row p-3 shadow rounded dark-bg-wrapper">
-                            <div className="text-end mt-4" onClick={changeWatchlist}>
+                            <div className="text-end mt-4" >
                                 {hasWatchlist === false ? (
-                                    <span className="badge bg-danger px-3 btn" style={{ cursor: "pointer" }}><h5><FaBookmark className="text-light" /></h5></span>
+                                    <span className="badge bg-danger px-3 btn" onClick={changeWatchlist} style={{ cursor: "pointer" }}><h5><FaBookmark className="text-light" /></h5></span>
                                 ) : (
-                                    <span className="badge bg-danger px-3 btn" style={{ cursor: "pointer" }}><h5><FaBookmark className="text-dark" /></h5></span>
+                                    <span className="badge bg-danger px-3 btn" onClick={changeWatchlist} style={{ cursor: "pointer" }}><h5><FaBookmark className="text-dark" /></h5></span>
                                 )}
                             </div>
 

@@ -30,6 +30,7 @@ import PointMain from "./Point/PointMain";
 import QuizLanding from "./quiz/QuizLanding";
 
 import SlideContents from "./Contents/SlideContents";
+import ReviewDetail from "./review/ReviewDetail";
 
 
 
@@ -93,6 +94,8 @@ export default function Content() {
 
                     {/* 리뷰작성 */}
                     <Route path="/review/write/:contentsId" element={<WriteReview/>}></Route>
+                    <Route path="/review/:contentsId/:reviewNo" element={<ReviewDetail/>}></Route>
+
 
                     {/* 리뷰 조회 */}
                     <Route path="/contents/searchForReview" element={<SearchAndSave/>}>

@@ -55,8 +55,8 @@ export default function WriteReview() {
 
     const reviewData = {
         ...review,
-        contentsId: contentsId,
-        loginId: loginId
+        reviewContents: contentsId,
+        reviewWriter: loginId
     };
 
 

@@ -107,3 +107,22 @@
 .reviewWrapper {
   text-decoration: none;
 }
+
+.quiz-question{
+  color : rgb(255, 255, 255) !important;
+  background: #d8d6d681 !important;
+}
+.quiz-answer{
+  color : rgb(255, 255, 255) !important;
+  background: #5993ffcc !important;
+}
+.quiz-option{
+  color : rgb(77, 77, 77) !important;
+  /* background: #5993ffcc !important; */
+}
+
+.quiz-table-thead{
+  color : rgb(255, 255, 255) !important;
+  background: #5993ffcc !important;
+  text-shadow: #4e1b1b !important;
+}

@@ -262,7 +262,7 @@ export default function ContentsDetail() {
                             <FaStar key={num} style={{ color: num <= review.reviewRating ? "#ffc107" : "#444", marginRight: "2px" }} />
                         ))}
                         <span className="ms-2 text-light small me-2">{review.reviewRating}점</span>
-                        • <span className="ms-2"><FcMoneyTransfer className="me-1" />(가격) 원</span>
+                        • <span className="ms-2"><FcMoneyTransfer className="me-1" />{review.reviewPrice} 원</span>
                     </div>
 
                     {/* 내용 (스포일러) */}

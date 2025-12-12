@@ -91,6 +91,7 @@ export default function Home() {
                 ...data.map(rate => ({ ...rate }))
             ];
             setRateList(ratelist);
+            // console.log("불러온 데이터: ", data);
         }
         catch (error) {
             console.log("에러발생 : ", error);
@@ -135,7 +136,7 @@ export default function Home() {
                         <img src={getPosterUrl(content.contentsPosterPath)}
                             className="card-img-top"
                             alt={content.contentsTitle}
-                            style={{ height: "350px", objectFit: "cover" }}/>
+                            style={{ height: "350px", objectFit: "cover" }} />
                         {/* 북마크 수 뱃지 */}
                         <div className="position-absolute top-0 end-0 m-2 px-2 py-2 rounded bg-black bg-opacity-75 text-white shadow-sm"
                             style={{ fontSize: "0.9rem", backdropFilter: "blur(2px)" }}>
@@ -176,13 +177,21 @@ export default function Home() {
                         <img src={getPosterUrl(content.contentsPosterPath)}
                             className="card-img-top"
                             alt={content.contentsTitle}
-                            style={{ height: "350px", objectFit: "cover" }}/>
-                        {/* 북마크 수 뱃지 */}
-                        <div className="position-absolute top-0 start-0 m-2 px-2 py-2 rounded bg-black bg-opacity-75 text-danger shadow-sm"
-                            style={{ fontSize: "0.9rem", backdropFilter: "blur(2px)" }}>
-                            <span className="fw-bold fs-5">
-                                {content.contentsRateRank}
-                            </span>
+                            style={{ height: "350px", objectFit: "cover" }} />
+                        {/* 랭킹 뱃지 영역 (이미지 내부) */}
+                        <div className="position-absolute top-0 start-0 m-0 p-0">
+                            <div className="bg-black bg-opacity-75 text-danger d-flex align-items-center justify-content-center shadow"
+                                style={{
+                                    width: "40px",
+                                    height: "40px",
+                                    borderBottomRightRadius: "8px",
+                                    backdropFilter: "blur(2px)"
+                                }}>
+                                {/* 숫자 스타일: 굵고 크게 */}
+                                <span className="fw-bold fs-4">
+                                    {content.contentsRateRank}
+                                </span>
+                            </div>
                         </div>
                     </div>
                     <div className="card-body shadow">
@@ -215,13 +224,21 @@ export default function Home() {
                         <img src={getPosterUrl(content.contentsPosterPath)}
                             className="card-img-top"
                             alt={content.contentsTitle}
-                            style={{ height: "350px", objectFit: "cover" }}/>
-                        {/* 북마크 수 뱃지 */}
-                        <div className="position-absolute top-0 start-0 m-2 px-2 py-2 rounded bg-black bg-opacity-75 text-danger shadow-sm"
-                            style={{ fontSize: "0.9rem", backdropFilter: "blur(2px)" }}>
-                            <span className="fw-bold fs-5">
-                                {content.contentsPriceRank}
-                            </span>
+                            style={{ height: "350px", objectFit: "cover" }} />
+                        {/* 랭킹 뱃지 영역 (이미지 내부) */}
+                        <div className="position-absolute top-0 start-0 m-0 p-0">
+                            <div className="bg-black bg-opacity-75 text-danger d-flex align-items-center justify-content-center shadow"
+                                style={{
+                                    width: "40px",
+                                    height: "40px",
+                                    borderBottomRightRadius: "8px",
+                                    backdropFilter: "blur(2px)"
+                                }}>
+                                {/* 숫자 스타일: 굵고 크게 */}
+                                <span className="fw-bold fs-4">
+                                    {content.contentsPriceRank}
+                                </span>
+                            </div>
                         </div>
                     </div>
                     <div className="card-body shadow">
@@ -255,7 +272,7 @@ export default function Home() {
                 <div className="p-2 pt-3 rounded series-wrapper" >
                     {rateList.length > 0 ? (
                         <Slider {...settings}>
-                            {rateList.map(rate => renderRateRankCard(rate))}
+                            {rateList.map((rate) => renderRateRankCard(rate))}
                         </Slider>
                     ) : (
                         <p className="text-white">로딩 중이거나 데이터가 없습니다.</p>

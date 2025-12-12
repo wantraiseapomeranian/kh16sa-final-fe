@@ -92,7 +92,7 @@ export default function QuizGameModal({ show, onClose, contentsId }) {
         return () => {
             window.removeEventListener('keydown', handleEscKey);
         };
-    }, [show, onClose]);
+    }, [show, onClose]); 
 
 
     //callback

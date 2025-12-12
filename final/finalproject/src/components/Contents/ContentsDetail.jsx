@@ -3,8 +3,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { FaQuestion, FaShare } from "react-icons/fa";
 import { useNavigate, useParams, Outlet, useLocation, Link } from "react-router-dom";
-
-import { FaBookmark, FaChevronUp, FaHeart, FaPencil, FaRegEye, FaStar } from "react-icons/fa6";
+import { ImEyePlus } from "react-icons/im";
+import { FaBookmark, FaChevronUp, FaHeart, FaPencil, FaStar } from "react-icons/fa6";
 import { FcMoneyTransfer } from "react-icons/fc";
 
 import "./SearchAndSave.css";
@@ -22,7 +22,8 @@ const INITIAL_DETAIL = {
     contentsId: null, contentsTitle: "", contentsType: "",
     contentsOverview: "", contentsPosterPath: "", contentsBackdropPath: "",
     contentsVoteAverage: 0, contentsRuntime: 0, contentsReleaseDate: "",
-    contentsDirector: "", contentsMainCast: "", genreNames: [], contentsLike: 0,
+    contentsDirector: "", contentsMainCast: "", genreNames: [],
+    contentsLike: 0, contentsRateAvg: 0, contentsPriceAvg: 0
 };
 
 export default function ContentsDetail() {
@@ -94,6 +95,7 @@ export default function ContentsDetail() {
     const loadData = useCallback(async () => {
         setIsLoading(true);
         const { data } = await axios.get(`/api/tmdb/contents/detail/${contentsId}`);
+        // console.log("서버에서 받은 데이터:", data);
         setContentsDetail(data);
         setIsLoading(false);
     }, []);
@@ -237,6 +239,29 @@ export default function ContentsDetail() {
     const myReviewPrice = useMemo(() => {
         return myReview?.reviewPrice?.toLocaleString('ko-KR') ?? "";
     }, [myReview]);
+
+    //컨텐츠 평균 가격 콤마
+    const getContentsPriceAvg = useMemo(() => {
+        const price = contentsDetail?.contentsPriceAvg;
+
+        // 가격 데이터가 없거나(null/undefined) 숫자가 아닐 경우
+        if (price === null || isNaN(price)) {
+            return "0";
+        }
+
+        return Math.floor(price).toLocaleString('ko-KR');
+    }, [contentsDetail]);
+
+    //컨텐츠 별점 정수화
+    const getContentsRateAvg = useMemo(() => {
+        const rate = contentsDetail?.contentsRateAvg;
+
+        if (rate === null || isNaN(rate)) {
+            return 0;
+        }
+
+        return rate;
+    }, [contentsDetail]);
 
     /// 리뷰 목록 모듈화
     function ReviewItem({ review, loginId }) {
@@ -397,7 +422,7 @@ export default function ContentsDetail() {
                                     <div>평점 : {contentsDetail.contentsVoteAverage.toFixed(1)} / 10</div>
                                     <div className="mt-4 text-center">
                                         <div className="d-inline-flex align-items-center justify-content-center px-4 py-2 rounded-pill like-wrapper">
-                                            <FaRegEye className="me-2 text-info fs-3" />
+                                            <ImEyePlus className="me-2 text-info fs-3" />
                                             <span className="fw-bold fs-5">{contentsDetail.contentsLike.toLocaleString()}</span>
                                         </div>
                                     </div>
@@ -407,6 +432,15 @@ export default function ContentsDetail() {
                             {/* 텍스트 영역 */}
                             <div className="col-9 col-md-7 ms-4 mt-4 text-light">
                                 <h3 className="text-light">{contentsDetail.contentsTitle}</h3>
+                                <div className="mt-5">  
+                                    <h5>평균 점수</h5>
+                                </div>
+                                <div className="fs-5 d-flex align-items-center">
+                                    {[1, 2, 3, 4, 5].map((num) => (
+                                        <FaStar key={num} style={{ color: num <= getContentsRateAvg ? "#ffc107" : "#444", marginRight: "2px" }} />
+                                    ))}
+                                    <span className="ms-2 text-light"> • <FcMoneyTransfer className="me-1" />{getContentsPriceAvg  } 원</span>
+                                </div>
                                 <div className="mt-4">
                                     <h5>줄거리</h5>
                                     <span className="break-word">{contentsDetail.contentsOverview}</span>
@@ -422,8 +456,8 @@ export default function ContentsDetail() {
                             </div>
 
                             <div className="text-end mb-3 mt-2">
-                                <button className="btn btn-success" onClick={writeReview}><FaPencil className="mb-1 me-1" />리뷰등록</button>
-                                <button className="btn btn-warning ms-2" onClick={goToQuiz}>
+                                <button className="contents btn btn-success" onClick={writeReview}><FaPencil className="mb-1 me-1" /> 리뷰 등록</button>
+                                <button className="contents btn btn-warning ms-2 text-light" onClick={goToQuiz}>
                                     {isQuizOpen ? (
                                         <><FaChevronUp className="mb-1 me-1" /> 퀴즈 닫기</>
                                     ) : (

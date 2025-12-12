@@ -133,7 +133,7 @@ export default function WriteReview() {
     // setMyReview(reviewData);
 
     const reviewValid = useMemo(() => {
-        const regex = /^(?=.*\S).{10,}$/
+        const regex = /^(?=.{10,})(?!.*([ㄱ-ㅎㅏ-ㅣ])\1{5,}).*$/;
         return regex.test(review.reviewText);
     }, [review.reviewText]);
 

@@ -65,14 +65,7 @@
     max-width: 100%;
 }
 
-.admin-layout-container {
-    display: flex;
+/* .d-flex {
     width: 100%;
-    
-    /* ⭐ 핵심: 헤더 높이만큼 위에서 떨어뜨림 */
-    margin-top: 60px; 
-    
-    /* 전체 화면 높이에서 헤더 높이를 뺀 만큼만 사용 */
-    min-height: calc(100vh - 60px); 
-    background-color: #121212;
-}
+    overflow-x: hidden;
+} */

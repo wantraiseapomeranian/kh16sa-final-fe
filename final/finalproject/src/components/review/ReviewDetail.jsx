@@ -372,7 +372,10 @@ export default function ReviewDetail() {
                     <span className="ms-3"><FcMoneyTransfer className="me-2" />{review.reviewPrice}원</span>
                 </div>
                 <hr className="HR" />
-                <div className="reviewText">{review.reviewText}</div>
+                {isSpoiler && (
+                    <div className="detailSpo"><FaRegEye /> 스포일러</div>
+                )}
+                <div className="mt-2 reviewText">{review.reviewText}</div>
                 <div className="col iconBox">
                     <div className="ms-2">
                         <span><IoHeartCircleSharp className="me-2 iconH" />

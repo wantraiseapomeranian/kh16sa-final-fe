@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom";
-
+import "./Board.css";
 
 
 export default function BoardContentsList(){
@@ -57,7 +57,7 @@ export default function BoardContentsList(){
                             <tr key={boardList.boardNo}>
                                 <td className="quiz-normal">{boardList.boardNo}</td>
                                 <td className="quiz-normal">{boardList.boardContentsId}</td>
-                                <td className="quiz-normal"><Link to={`/board/${boardList.boardNo}`}>{boardList.boardTitle}</Link></td>
+                                <td className="quiz-normal"><Link to={`/board/${boardList.boardNo}`} className="board-link">{boardList.boardTitle}</Link></td>
                                 <td className="quiz-normal">{boardList.boardWtime}</td>
                                 <td className="quiz-normal">{boardList.boardWriter}</td>
                             </tr>

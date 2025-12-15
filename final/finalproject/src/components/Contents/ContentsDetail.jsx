@@ -127,7 +127,7 @@ export default function ContentsDetail() {
         return `${mm}/${dd}`
     }
     const loadBoard = useCallback(async()=>{
-        const {data} = await axios.get(`/board/contentsId/${contentsId}`);
+        const {data} = await axios.get(`/board/contentsId/${contentsId}/5`);
           const formattedData = data.map(board => ({
             ...board,
             boardWtime: formatWtime(board.boardWtime)
@@ -518,7 +518,7 @@ export default function ContentsDetail() {
                                 {boardList.map((boardList)=>(
                                     <tr key={boardList.boardNo}>
                                         <td className="quiz-normal">{boardList.boardNo}</td>
-                                        <td className="quiz-normal"><Link to={`/board/${boardList.boardNo}`}>{boardList.boardTitle}</Link></td>
+                                        <td className="quiz-normal"><Link to={`/board/${boardList.boardNo}`} className="board-link">{boardList.boardTitle}</Link></td>
                                         <td className="quiz-normal">{boardList.boardWtime}</td>
                                         <td className="quiz-normal">{boardList.boardWriter}</td>
                                     </tr>

@@ -401,7 +401,7 @@ export default function ContentsDetail() {
                     <>
                         <div className="row mt-4 p-3 shadow rounded dark-bg-wrapper">
 
-                            <div className="text-end mb-3" onClick={changeWatchlist}>
+                            <div className="text-end mb-3">
                                 {hasWatchlist === false ? (
                                     <span className="badge bg-danger px-3 btn" onClick={changeWatchlist} style={{ cursor: "pointer" }}><h5><FaBookmark className="text-light" /></h5></span>
                                 ) : (

@@ -10,7 +10,7 @@ export default function BoardDetail(){
     //state
     const [board, setBoard] = useState({});
     const {boardNo} = useParams();
-
+    const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
     // effect
     useEffect(()=>{
@@ -39,21 +39,40 @@ export default function BoardDetail(){
         }
     },[])
 
+    //[포스터 이미지 url 생성 함수]
+    const getPosterUrl = useCallback((path) => {
+        return path ? `${TMDB_IMAGE_BASE_URL}${path}` : 'https://placehold.co/500x750/cccccc/333333?text=No+Image';
+    }, []);
+
     //rendar
     return (<>
         <div className="row">
-            <div className="col">
-                {board.boardNo}
+            <div className="col-9 text-center">
+                <h1>{board.boardTitle} </h1>
+            </div>
+            <div className="col-3">
+                board.boardContentsId
+                <img
+                    src={getPosterUrl("#")}
+                    className="card-img-top" alt={board.boardTitle}
+                    style={{ height: "300px", objectFit: "cover" }}
+                />
             </div>
         </div>
+        <div className="row">
+            <div className="col-3">
+                {board.boardWriter}
+            </div>
+            <div className="col-6">
+                {board.boardWtime}
+            </div>
+        </div>
+        <hr/>
 
-        {board.boardTitle} <br/>
-        {board.boardContentsId}<br/>
-        {board.boardWtime}<br/>
-        {board.boardEtime}<br/>
-        {board.boardWriter}<br/>
+
+
         {board.boardText}<br/>
-
+        <hr/>
         <div className="row mt-2">
             <div className="col">
                 <Link className="btn btn-secondary me-2" to="/board/list">전체목록</Link>

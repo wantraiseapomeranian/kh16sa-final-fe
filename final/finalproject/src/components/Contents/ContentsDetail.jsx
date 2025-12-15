@@ -127,7 +127,7 @@ export default function ContentsDetail() {
         return `${mm}/${dd}`
     }
     const loadBoard = useCallback(async()=>{
-        const {data} = await axios.get(`/board/contentsId/${contentsId}`);
+        const {data} = await axios.get(`/board/contentsId/${contentsId}/5`);
           const formattedData = data.map(board => ({
             ...board,
             boardWtime: formatWtime(board.boardWtime)

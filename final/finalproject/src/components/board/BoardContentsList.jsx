@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom";
 
 
@@ -13,13 +13,25 @@ export default function BoardContentsList(){
 
     //effect
     useEffect(()=>{
-        console.log(contentsId);
-        axios.get(`/board/contentsId/${contentsId}`)
-        .then(response=>{
-            setBoardList(response.data);
-            console.log(response.data);
-        })
+        loadBoard();
     },[])
+
+    const formatWtime = (dateString)=>{
+        const date = new Date(dateString);
+        const mm = String(date.getMonth() + 1).padStart(2, "0");
+        const dd = String(date.getDate()).padStart(2, "0");
+        return `${mm}/${dd}`
+    }
+
+    //callback
+    const loadBoard = useCallback(async()=>{
+        const {data} = await axios.get(`/board/contentsId/${contentsId}`)
+          const formattedData = data.map(board => ({
+            ...board,
+            boardWtime: formatWtime(board.boardWtime)
+        }));
+        setBoardList(formattedData);
+    },[contentsId])
 
 
     //rendar

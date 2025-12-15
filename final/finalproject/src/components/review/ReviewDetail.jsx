@@ -97,6 +97,7 @@ export default function ReviewDetail() {
                         reviewNo: reviewNo
                     });
                     setRating(data.reviewRating);
+                    setPrice(data.reviewPrice);
                     setLikeCount(data.reviewLike);
                     setWriter(data.reviewWriter);
                     setSpoiler(data.reviewSpoiler);
@@ -154,7 +155,6 @@ export default function ReviewDetail() {
     //별점 기능 구현
     const [rating, setRating] = useState(0);
     const [price, setPrice] = useState(0);
-    const [ratingAlert, setRatingAlert] = useState(false);
 
     const handleStarClick = (num) => {
         setRating(num);  // 클릭한 별 번호로 rating 설정
@@ -341,13 +341,18 @@ export default function ReviewDetail() {
             reviewText: review.reviewText,
             reviewRating: review.reviewRating,
             reviewSpoiler: review.reviewSpoiler,
-            reviewPrice: review.reviewPrice,
+            reviewPrice: review.reviewPrice
+            // reviewEtime: new Date().toISOString()
         }
 
         axios.patch(`/review/${contentsId}/${reviewNo}`, payload)
             .then(() => {
                 toast.success("리뷰 수정 완료");
                 setReviewView(true);
+                setReview(prev => ({
+                    ...prev,
+                    // reviewEtime: payload.reviewEtime
+                }))
             })
             .catch(err => {
                 toast.error("수정 도중 오류가 발생했습니다");
@@ -375,7 +380,7 @@ export default function ReviewDetail() {
             {/* (단일) 조회 페이지 */}
             {(reviewView &&
                 <div className="row">
-                    <div className="col d-flex justify-content-between align-items-center">
+                    <div className="col d-flex justify-content-between align-items-center mt-5">
                         <span className="mainTitle mx-auto">리뷰</span>
                         {isWriter && (
                             <button className="mainTitleB" type="button" onClick={openModal1}
@@ -389,18 +394,18 @@ export default function ReviewDetail() {
                         )}
                     </div>
                     <div className="mt-4 mb-4">
-                        <span className="userId">아이디</span>
-                        <span className="time ms-3">{formattedDate}</span>
+                        <span className="userId">{review.reviewWriter}</span>
                     </div>
                     <div className="col title mb-2">
                         {contentsDetail.contentsTitle}
+                        <span className="tv ms-3">방영: {formattedDate}</span>
                     </div>
                     <div className="d-flex align-items-center mb-3">
                         {isWriter && (
                             <span className="me-2">내 평가</span>
                         )}
                         <span><FaStar className="littleStar me-1 mb-1" />{reviewDate}</span>
-                        <span className="ms-3"><FcMoneyTransfer className="me-2" />{review.reviewPrice}원</span>
+                        <span className="ms-3"><FcMoneyTransfer className="me-2" />{price.toLocaleString()} 원</span>
                     </div>
                     <hr className="HR" />
                     {isSpoiler && (
@@ -425,7 +430,7 @@ export default function ReviewDetail() {
             {/* 수정 페이지 */}
             {(!reviewView &&
                 <div className="row position-relative">
-                    <div className="col text-center">
+                    <div className="col text-center mt-5">
                         {/* 본인이면  mainTitleB 버튼 나와서 수정, 삭제  모달*/}
                         <span className="mainTitle2 mx-auto">리뷰</span>
                         <button type="button" className="save position-absolute end-0 top-0"
@@ -435,11 +440,11 @@ export default function ReviewDetail() {
                         </button>
                     </div>
                     <div className="mt-4 mb-4">
-                        <span className="userId">{loginNickname}</span>
-                        <span className="time ms-3">{formattedDate}</span>
+                        <span className="userId">{review.reviewWriter}</span>
                     </div>
                     <div className="col title mb-2">
                         {contentsDetail.contentsTitle}
+                        <span className="tv ms-3">방영: {formattedDate}</span>
                     </div>
                     <div className="d-flex align-items-center mb-3">
                         {isWriter && (
@@ -456,15 +461,12 @@ export default function ReviewDetail() {
                     </div>
                     <div className="col iconBox2">
 
-
-
                         <div className="rr">
                             <div className="d-flex align-items-center ms-2 me-5">
                                 {/* 별점 텍스트 */}
                                 <span className="me-2 d-flex align-items-center">
                                     <FaStar className="me-1" /> 별점
                                 </span>
-
                                 {/* 별점 별들 */}
                                 <div className="d-flex align-items-center me-2"
                                     value={review.reviewRating}
@@ -479,24 +481,16 @@ export default function ReviewDetail() {
                                         />
                                     ))}
                                 </div>
-
-                                {/* dd */}
                                 <div className="mt-1 ms-3 input-group price-wrapper2 text-center w-25">
-                                <input type="text" inputMode="numerice"
-                                    className="price form-control price-bar text-light"
-                                    value={price} onChange={changeNum}/>
-                                <span className="input-group-text price-label text-light">원</span>
-                            </div>
+                                    <input type="text" inputMode="numerice"
+                                        className="price form-control price-bar text-light"
+                                        value={price.toLocaleString()}  onChange={changeNum} />
+                                    <span className="input-group-text price-label text-light">원</span>
+                                </div>
                             </div>
                         </div>
 
-
-
-
-
-
-
-                        <hr className="mt-4" style={{color:"gray"}} />
+                        <hr className="mt-4" style={{ color: "gray" }} />
                         <div className="d-flex align-items-center ms-2 mb-1 justify-content-between">
                             <span style={{ fontSize: "20px", fontWeight: "bold" }}><FaRegEye className="spo2 me-1" />스포일러 포함</span>
                             <div className="form-switch form-check">
@@ -590,18 +584,32 @@ export default function ReviewDetail() {
                                     </div>
 
                                 </div>
-                                <div style={{ color: "white" }} className="mt-4">
-                                    <input type="checkbox" className="ms-3" /><span className="ms-3">스포일러 포함</span><br />
-                                    <input type="checkbox" className="ms-3" /><span className="ms-3">작품을 보지 않고 쓴 내용</span><br />
-                                    <input type="checkbox" className="ms-3" /><span className="ms-3">홍보성 및 영리목적</span><br />
-                                    <input type="checkbox" className="ms-3" /><span className="ms-3">욕설 및 특정인 비방</span><br />
-                                    <input type="checkbox" className="ms-3" /><span className="ms-3">음란성 및 선정성</span><br />
-                                    <input type="checkbox" className="ms-3" /><span className="ms-3">편파적인 언행</span><br />
-                                    <input type="checkbox" className="ms-3" /><span className="ms-3">기타</span><br />
+                                <div style={{ color: "white" }} className="mt-3 reportCheck">
+                                    <div>
+                                        <input type="radio" className="ms-3 form-check-input" /><span className="ms-3">스포일러 포함</span>
+                                    </div>
+                                    <div className="mt-3">
+                                        <input type="radio" className="ms-3 form-check-input" /><span className="ms-3">작품을 보지 않고 쓴 내용</span>
+                                    </div>
+                                    <div className="mt-3">
+                                        <input type="radio" className="ms-3 form-check-input" /><span className="ms-3">홍보성 및 영리목적</span><br />
+                                    </div>
+                                    <div className="mt-3">
+                                        <input type="radio" className="ms-3 form-check-input" /><span className="ms-3">욕설 및 특정인 비방</span><br />
+                                    </div>
+                                    <div className="mt-3">
+                                        <input type="radio" className="ms-3 form-check-input" /><span className="ms-3">음란성 및 선정성</span><br />
+                                    </div>
+                                    <div className="mt-3">
+                                        <input type="radio" className="ms-3 form-check-input" /><span className="ms-3">편파적인 언행</span><br />
+                                    </div>
+                                    <div className="mt-3">
+                                        <input type="radio" className="ms-3 form-check-input" /><span className="ms-3">기타</span><br />
+                                    </div>
                                     <hr className="HR" />
                                 </div>
-                                <div style={{ color: "white" }} className="mt-4"><span>더 자세한 의견 / 추후 디자인</span></div>
-                                <textarea name="" id=""></textarea>
+                                <div style={{ color: "#acacbbff" }} className="mt-4 ms-2 mb-3"><span>더 자세한 의견</span></div>
+                                <textarea name="" className="idea ms-3"></textarea>
                                 <div className="mt-4 d-flex justify-content-between">
                                     <button type="button" className="reportB col-5 me-4 mb-1"
                                         onClick={() => {

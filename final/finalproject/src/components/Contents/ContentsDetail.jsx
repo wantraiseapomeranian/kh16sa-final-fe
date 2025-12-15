@@ -456,7 +456,10 @@ export default function ContentsDetail() {
                             </div>
 
                             <div className="text-end mb-3 mt-2">
+                                {!myReview && (
                                 <button className="contents btn btn-success" onClick={writeReview}><FaPencil className="mb-1 me-1" /> 리뷰 등록</button>
+                                )}
+
                                 <button className="contents btn btn-warning ms-2 text-light" onClick={goToQuiz}>
                                     {isQuizOpen ? (
                                         <><FaChevronUp className="mb-1 me-1" /> 퀴즈 닫기</>

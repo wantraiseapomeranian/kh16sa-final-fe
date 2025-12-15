@@ -21,7 +21,7 @@
 }
 
 .fullStar3 {
-    color: gold;
+    color: #7997cc;
     font-size: 25px;
     margin-left: 0.15em;
 }
@@ -340,6 +340,20 @@ textAA:focus::placeholder {
     border-radius: 0.8em !important;
     background-color: transparent !important;
 }
+
+.price-wrapper2 {
+    box-shadow: 0 0 7px #6785b9 !important;
+
+    border-radius: 0.8em;
+    background-color: transparent;
+}
+
+.price-wrapper2:focus-within {
+    box-shadow: 0 0 25px #6785b9 !important;
+    border-radius: 0.8em !important;
+    background-color: transparent !important;
+}
+
 
 .price-bar.form-control {
     color: #ffffff;

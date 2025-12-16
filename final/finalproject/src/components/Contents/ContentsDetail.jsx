@@ -1,10 +1,10 @@
 import axios from "axios";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { FaQuestion, FaShare } from "react-icons/fa";
 import { useNavigate, useParams, Outlet, useLocation, Link } from "react-router-dom";
 import { ImEyePlus } from "react-icons/im";
-import { FaBookmark, FaChevronUp, FaHeart, FaPencil, FaStar } from "react-icons/fa6";
+import { FaBookmark, FaChevronUp, FaHeart, FaPencil, FaStar, FaXmark } from "react-icons/fa6";
 import { FcMoneyTransfer } from "react-icons/fc";
 
 import "./SearchAndSave.css";
@@ -12,8 +12,9 @@ import "./Contents.css";
 import { useAtom } from "jotai";
 import { loginIdState } from "../../utils/jotai";
 import { toast } from "react-toastify";
-import { set } from "lodash";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import { Modal } from "bootstrap";
+
 
 const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
@@ -120,20 +121,20 @@ export default function ContentsDetail() {
     }, []);
 
     // 콘텐츠 게시글 목록
-     const formatWtime = (dateString)=>{
+    const formatWtime = (dateString) => {
         const date = new Date(dateString);
         const mm = String(date.getMonth() + 1).padStart(2, "0");
         const dd = String(date.getDate()).padStart(2, "0");
         return `${mm}/${dd}`
     }
-    const loadBoard = useCallback(async()=>{
-        const {data} = await axios.get(`/board/contentsId/${contentsId}/5`);
-          const formattedData = data.map(board => ({
+    const loadBoard = useCallback(async () => {
+        const { data } = await axios.get(`/board/contentsId/${contentsId}/five`);
+        const formattedData = data.map(board => ({
             ...board,
             boardWtime: formatWtime(board.boardWtime)
         }));
         setBoardList(formattedData);
-    },[contentsId])
+    }, [contentsId])
 
 
 
@@ -227,6 +228,18 @@ export default function ContentsDetail() {
             navigate(`quiz`);
         }
     };
+
+    //모달
+    const modal3 = useRef();
+
+    const openModal3 = () => {
+        const open = new Modal(modal3.current);
+        open.show();
+    }
+    const closeModal3 = () => {
+        const close = Modal.getInstance(modal3.current);
+        if (close) close.hide();
+    }
 
     //Memo
     //장르 목록을 react 엘리먼트로 변환하는 함수
@@ -340,22 +353,105 @@ export default function ContentsDetail() {
         // 가격 포맷
         const formattedPrice = review.reviewPrice.toLocaleString('ko-KR');
 
+
+        const [Writer, setWriter] = useState("");
+
+        const isWriter = useMemo(() => {
+            return loginId === review.reviewWriter;
+        }, [loginId, review.reviewWriter])
+
+
+        //render
         return (
             <div className="row mt-4 p-3 review-card">
                 <div className="col mt-2">
+
+
+                    <div className="d-flex align-items-center justify-content-between">
+                        <div className="d-flex align-items-center w-100 mt-2">
+                            {/* 왼쪽 */}
+                            <h4 className="text-light mb-0">
+                                {review.memberNickname}({review.reviewWriter})
+                                {review.reviewEtime && " (수정됨)"}
+                            </h4>
+
+                            {/* 오른쪽 - 자동으로 밀기 */}
+                            <div className="d-flex align-items-center ms-auto">
+                                <p className="text-light mb-0 me-4">{formattedDate}</p>
+                                <button
+                                    className="mainTitleB p-0"
+                                    type="button"
+                                    onClick={openModal3}
+                                >
+                                    <BsThreeDotsVertical />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* 신고 모달 */}
+                                <div className="modal fade" id="ModalToggle3" data-bs-backdrop="static" tabIndex="-1" ref={modal3}
+                                    data-bs-keyboard="false">
+                                    <div className="modal-dialog modal-sm">
+                                        <div className="three">
+                                            <div className="modal-content">
+                                                <div className="modal-body">
+                                                    <div className="row">
+                                                        <div className="col report text-center mt-2 d-flex">
+                                                            <div className="col-2 mt-1" style={{ marginLeft: "40%" }}>신고</div>
+                                                            <div className="col-2">
+                                                                <button type="button" className="modalButtonX2" onClick={closeModal3}>
+                                                                    <FaXmark />
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                    
+                                                    </div>
+                                                    <div style={{ color: "white" }} className="mt-3 reportCheck">
+                                                        <div>
+                                                            <input type="radio" className="ms-3 form-check-input" /><span className="ms-3">스포일러 포함</span>
+                                                        </div>
+                                                        <div className="mt-3">
+                                                            <input type="radio" className="ms-3 form-check-input" /><span className="ms-3">작품을 보지 않고 쓴 내용</span>
+                                                        </div>
+                                                        <div className="mt-3">
+                                                            <input type="radio" className="ms-3 form-check-input" /><span className="ms-3">홍보성 및 영리목적</span><br />
+                                                        </div>
+                                                        <div className="mt-3">
+                                                            <input type="radio" className="ms-3 form-check-input" /><span className="ms-3">욕설 및 특정인 비방</span><br />
+                                                        </div>
+                                                        <div className="mt-3">
+                                                            <input type="radio" className="ms-3 form-check-input" /><span className="ms-3">음란성 및 선정성</span><br />
+                                                        </div>
+                                                        <div className="mt-3">
+                                                            <input type="radio" className="ms-3 form-check-input" /><span className="ms-3">편파적인 언행</span><br />
+                                                        </div>
+                                                        <div className="mt-3">
+                                                            <input type="radio" className="ms-3 form-check-input" /><span className="ms-3">기타</span><br />
+                                                        </div>
+                                                        <hr className="HR" />
+                                                    </div>
+                                                    <div style={{ color: "#acacbbff" }} className="mt-4 ms-2 mb-3"><span>더 자세한 의견</span></div>
+                                                    <textarea name="" className="idea ms-3"></textarea>
+                                                    <div className="mt-4 d-flex justify-content-between">
+                                                        <button type="button" className="reportB col-5 me-4 mb-1"
+                                                            onClick={() => {
+                                                                closeModal3();
+                                                            }}>신고하기</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                     <Link className="text-decoration-none link-body-emphasis text-light"
                         to={`/review/${contentsId}/${review.reviewNo}`}>
-                        <div className="d-flex justify-content-between">
-                            <h4 className="text-light">
-                                {review.memberNickname}({review.reviewWriter}){review.reviewEtime ? " (수정됨)" : ""}
-                            </h4>
-                            <p className="text-light">{formattedDate}</p>
-                        </div>
 
                         {/* 별점 */}
-                        <div className="mt-1 d-flex align-items-center">
+                        <div className="mt-3 d-flex align-items-center">
                             {[1, 2, 3, 4, 5].map((num) => (
-                                <FaStar key={num} style={{ color: num <= review.reviewRating ? "#ffc107" : "#444", marginRight: "2px" }} />
+                                <FaStar key={num} style={{ color: num <= review.reviewRating ? "#ffc107" : "#979797ff", marginRight: "2px" }} />
                             ))}
                             <span className="ms-2 text-light me-2">{review.reviewRating}점 • </span>
 
@@ -453,14 +549,14 @@ export default function ContentsDetail() {
                             {/* 텍스트 영역 */}
                             <div className="col-9 col-md-7 ms-4 mt-4 text-light">
                                 <h3 className="text-light">{contentsDetail.contentsTitle}</h3>
-                                <div className="mt-5">  
+                                <div className="mt-5">
                                     <h5>평균 점수</h5>
                                 </div>
                                 <div className="fs-5 d-flex align-items-center">
                                     {[1, 2, 3, 4, 5].map((num) => (
-                                        <FaStar key={num} style={{ color: num <= getContentsRateAvg ? "#ffc107" : "#444", marginRight: "2px" }} />
+                                        <FaStar key={num} style={{ color: num <= getContentsRateAvg ? "#ffc107" : "#979797ff", marginRight: "2px" }} />
                                     ))}
-                                    <span className="ms-2 text-light"> • <FcMoneyTransfer className="me-1" />{getContentsPriceAvg  } 원</span>
+                                    <span className="ms-2 text-light"> • <FcMoneyTransfer className="me-1" />{getContentsPriceAvg} 원</span>
                                 </div>
                                 <div className="mt-4">
                                     <h5>줄거리</h5>
@@ -502,10 +598,10 @@ export default function ContentsDetail() {
                 <div className="mt-4 card quiz-dark-card text-center">
                     <div className="card-header fw-bold border-0 stats-header-dark p-3 fs-5">
                         <div className="row">
-                            <span className ="col-12 col-md-10 mb-1">최근 게시글</span>
+                            <span className="col-12 col-md-10 mb-1">최근 게시글</span>
                             <Link to={`/board/list/${contentsId}`} className="col-md-2 btn btn-secondary">전체보기</Link>
                         </div>
-                        
+
                     </div>
                     <div className="table-responsive">
                         <table className="table">
@@ -518,16 +614,16 @@ export default function ContentsDetail() {
                                 </tr>
                             </thead>
                             <tbody >
-                                {boardList.map((boardList)=>(
+                                {boardList.map((boardList) => (
                                     <tr key={boardList.boardNo}>
                                         <td className="quiz-normal">{boardList.boardNo}</td>
                                         <td className="quiz-normal"><Link to={`/board/${boardList.boardNo}`} className="board-link">{boardList.boardTitle}</Link></td>
                                         <td className="quiz-normal">{boardList.boardWtime}</td>
                                         <td className="quiz-normal">{boardList.boardWriter}</td>
                                     </tr>
-                            ))}
+                                ))}
                             </tbody>
-                    </table>
+                        </table>
                     </div>
                 </div>
 
@@ -541,21 +637,21 @@ export default function ContentsDetail() {
                             </div>
                             <hr className="mt-2 HR mb-4" />
                         </div>
-                        <div className="row mt-4 p-3 myreview-card">
-                            <div className="col mt-2">
+                        <div className="row mt-3 p-3 myreview-card">
+                            <div className="col mt-3">
                                 <Link className="text-decoration-none link-body-emphasis text-light"
                                     to={`/review/${contentsId}/${myReview.reviewNo}`}>
-                                    <div className="d-flex justify-content-between">
+                                    <div className="d-flex justify-content-between mt-1">
                                         <h4 className="text-light">
                                             {contentsDetail.contentsTitle}{myReview.reviewEtime ? " (수정됨)" : ""}
                                         </h4>
-                                        <p className="text-light">{myReviewDate}</p>
+                                        <p className="text-light me-2 mb-1">{myReviewDate}</p>
                                     </div>
 
                                     {/* 별점 */}
-                                    <div className="mt-1 d-flex align-items-center">
+                                    <div className="mt-2 d-flex align-items-center">
                                         {[1, 2, 3, 4, 5].map((num) => (
-                                            <FaStar key={num} style={{ color: num <= myReview.reviewRating ? "#ffc107" : "#444", marginRight: "2px" }} />
+                                            <FaStar key={num} style={{ color: num <= myReview.reviewRating ? "#ffc107" : "#979797ff", marginRight: "2px" }} />
                                         ))}
                                         <span className="ms-2 text-light me-2">{myReview.reviewRating}점 • </span>
 
@@ -596,13 +692,15 @@ export default function ContentsDetail() {
                             </div>
                             <hr className="mt-2 HR mb-4" />
                         </div>
-                        {reviewList.map((review) => (
-                            <ReviewItem
-                                key={review.reviewNo}
-                                review={review}
-                                loginId={loginId}
-                            />
-                        ))}
+                        {reviewList
+                            .filter(review => review.reviewNo !== myReview?.reviewNo)
+                            .map((review) => (
+                                <ReviewItem
+                                    key={review.reviewNo}
+                                    review={review}
+                                    loginId={loginId}
+                                />
+                            ))}
                     </div>
                 )}
             </div>

@@ -14,7 +14,7 @@ export default function MemberMypage(){
     const [answerQuizList, setAnswerQuizList] = useState([]);
     const [answerQuizRate, setAnswerQuizRate] = useState([]);
     const [addQuizList, setAddQuizList] = useState([]);
-    
+    // 페이지네이션을 위한 설정
     const [answerPage, setAnswerPage] = useState(1);
     const [answerPageData, setAnswerPageData] = useState({
         page : 1,size : 10,  totalCount : 0, totalPage : 0, blockStart : 1, blockFinish : 1
@@ -26,9 +26,9 @@ export default function MemberMypage(){
 
     //callback 
     const loadData = useCallback(async()=>{
-        // const answerList = await axios.get(`/member/myanswerquiz/${loginId}/${answerPage}`);
-        // setAnswerQuizList(answerList.data.list);
-        // setAnswerQuizList(answerList.data.pageVO);
+        const answerList = await axios.get(`/member/myanswerquiz/${loginId}/${answerPage}`);
+        setAnswerQuizList(answerList.data.list);
+        setAnswerPageData(answerList.data.pageVO);
         const addList = await axios.get(`/member/myaddquiz/${loginId}/${addPage}`);
         setAddQuizList(addList.data.list);
         setAddPageData(addList.data.pageVO);

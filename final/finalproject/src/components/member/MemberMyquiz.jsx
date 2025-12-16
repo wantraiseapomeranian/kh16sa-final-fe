@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { FaChartBar } from "react-icons/fa";
-import Pagination from "./Pagination";
+import Pagination from "../Pagination";
 
 export default function MemberMypage(){
     const [loginId, setLoginId] = useAtom(loginIdState);

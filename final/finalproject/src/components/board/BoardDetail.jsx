@@ -5,7 +5,7 @@ import { FaComment, FaRegEye, FaRegThumbsDown, FaRegThumbsUp } from "react-icons
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { toast } from "react-toastify";
 import { loginIdState } from "../../utils/jotai";
-
+import { cleanExpiredViews } from '../localStorage/cleanStorage';
 
 
 export default function BoardDetail() {
@@ -64,37 +64,12 @@ export default function BoardDetail() {
             catch(e){console.log("조회 수 증가 실패")};
         };
     },[loginId, boardNo])
-    // 로컬 스토리지에서 만료된 키 제거
-    const cleanExpiredViews = useCallback(() => {
-        const now = Date.now();
-
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key.startsWith("view_")) {
-                const stored = localStorage.getItem(key);
-                if (!stored) continue;
-                try {
-                    const parsed = JSON.parse(stored);
-                    if (now - parsed.time > viewTimeLimit) {
-                        localStorage.removeItem(key);
-                        i--; 
-                    }
-                } catch (e) {
-                    console.warn("Invalid localStorage entry:", key);
-                }
-            }
-        }
-},[]);
+    
      // 조회수 증가요청 실행
     useEffect(()=>{
         checkView();
-        cleanExpiredViews();
-    },[checkView, cleanExpiredViews])
-
-
-
-
-
+        cleanExpiredViews(); // 로컬 스토리지에서 만료된 키 제거
+    },[checkView])
 
     // callback
     //[게시글 상세 정보 조회]

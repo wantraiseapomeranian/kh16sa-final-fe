@@ -678,7 +678,7 @@ export default function ContentsDetail() {
                 )}
 
                 {/* 컨텐츠 관련 게시글 */}
-                <div className="mt-4 card quiz-dark-card text-center">
+                <div className="mt-4 quizCard quiz-dark-card text-center">
                     <div className="card-header fw-bold border-0 stats-header-dark p-3 fs-5">
                         <div className="row">
                             <span className="col-12 col-md-10 mb-1">최근 게시글</span>

@@ -144,7 +144,7 @@ export default function Content() {
                         {/* <Route path="review" element={<AdminReviewPage />} /> */}
                         <Route path="/admin/member/:memberId" element={<Admin><AdminMemberDetail /></Admin>} />
                         <Route path="/admin/quiz" element={<Admin><AdminQuizPage /></Admin>} />
-                        {/* <Route path="point" element={<AdminPointPage />} /> */}
+         
                     </Route>
                 </Routes>
             </div>

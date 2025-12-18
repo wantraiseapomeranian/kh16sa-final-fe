@@ -14,5 +14,6 @@ export default function Admin ( { children } ) {
         return <ClimbingBoxLoader/>
     }
 
-    return isAdmin === true ? children : <Navigate to={"/error/403"}/>
+    // return isAdmin === true ? children : <Navigate to={"/error/403"}/>
+    return isAdmin === true   ? children   : <Navigate to="/error/403" replace />;
 }

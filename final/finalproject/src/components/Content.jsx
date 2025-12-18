@@ -26,7 +26,7 @@ import MemberEditPassword from "./member/MemberEditPassword";
 import ReviewSearch from "./review/ReviewUpdate";
 import SearchResult from "./Contents/SearchResult";
 import PointMain from "./point/PointMain";
-
+import PointRanking from "./point/PointRanking";
 import QuizLanding from "./quiz/QuizLanding";
 
 import SlideContents from "./Contents/SlideContents";

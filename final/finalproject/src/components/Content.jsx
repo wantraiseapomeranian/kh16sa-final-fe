@@ -54,9 +54,6 @@ import MemberProfile from "./member/MemberProfile";
 import MemberProfileFavorite from "./member/MemberProfileFavorite";
 import MemberProfileInfo from "./member/MemberPofileInfo";
 import MemberProfileReview from "./member/MemberProfileReview";
-import PointRanking from "./point/PointRanking";
-
-
 import Private from "./guard/Private";
 import Admin from "./guard/Admin";
 export default function Content() {
@@ -91,8 +88,8 @@ export default function Content() {
                     
 
                     {/* 회원 페이지 */}
-                    <Route path="/point/main" element={<PointMain/>}></Route>
-                    <Route path="/point/ranking" element={<PointRanking />}></Route>
+                    <Route path="/point/main" element={<Private><PointMain/></Private>}></Route>
+                    <Route path="/point/ranking" element={<Private><PointRanking/></Private>}></Route>
                     {/* 게시글 페이지 */}
                     <Route path="/board/list" element={<BoardList/>}></Route>
                     <Route path="/board/List/:contentsId" element={<BoardContentsList/>}></Route>
@@ -113,8 +110,8 @@ export default function Content() {
                         <Route path="/member/mypage/myfavorite/:loginId" element={<Private><MemberMyfavorite/></Private>}> </Route>
                         <Route path="/member/mypage/myreview/:loginId" element={<Private><MemberMyreview/></Private>}> </Route>
                         <Route path="/member/mypage/edit/:loginId" element={<Private><MemberEdit/></Private>}></Route>
-                        <Route path="/member/mypage/password/:loginId" element={<MemberEditPassword/>}></Route>
-                        <Route path="/member/mypage/quiz/detail/:quizId" element={<MyCreatedQuizDetail />} />
+                        <Route path="/member/mypage/password/:loginId" element={<Private><MemberEditPassword/></Private>}></Route>
+                        <Route path="/member/mypage/quiz/detail/:quizId" element={<Private><MyCreatedQuizDetail /></Private>} />
                     </Route>
                     <Route path="/member/profile" element={<MemberProfile/>}>
                         <Route path="/member/profile/info/:memberId" element={<MemberProfileInfo/>}> </Route>

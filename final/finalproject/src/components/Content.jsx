@@ -48,7 +48,8 @@ import RankingMoviePage from "./ranking/RankingContentsPage";
 import RankingNewPage from "./ranking/RankingNewPage";
 import RankingContentsPage from "./ranking/RankingContentsPage";
 import BoardEdit from "./board/BoardEdit";
-
+import Private from "./guard/Private";
+import Admin from "./guard/Admin";
 export default function Content() {
     return (<>
 

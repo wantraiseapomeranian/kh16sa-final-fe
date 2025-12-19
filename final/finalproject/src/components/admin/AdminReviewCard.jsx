@@ -1,9 +1,10 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import './AdminQuiz.css';
 
 export default function AdminReviewCard({ reviewData, refreshList }) {
+    const [openReviewId, setOpenReviewId] = useState(null);
 
     // 기타 내용 펼침 여부 및 데이터
     const [isEtcOpen, setIsEtcOpen] = useState(false);
@@ -41,8 +42,16 @@ export default function AdminReviewCard({ reviewData, refreshList }) {
         !AdAndExplicit &&
         !SwearAndBiased;
 
-    const OtherText = reviewData.reviewReportContent;
-
+////////////////////////////////////////////////////////////////////
+    const OtherText = useCallback(()=>{
+        const text = reviewData.reviewReportContent;
+        setOpenReviewId(prev =>
+             prev === reviewData.reviewId ? null : reviewData.reviewId
+    )
+    },[reviewData.reviewId]);
+    
+    
+////////////////////////////////////////////////////////////////////
     // 기타 내용 가져오기 (Lazy Loading)
     const toggleEtcDetails = async () => {
         if (!isEtcOpen && etcDetails.length === 0) {
@@ -92,7 +101,7 @@ export default function AdminReviewCard({ reviewData, refreshList }) {
             </div>
 
             {/* 3. 신고 사유 요약 박스 */}
-            <div className="report-stats-box d-flex align-items-center flex-wrap gap-2">
+            <div className="report-stats-box flex-wrap gap-2">
                 <span className="fw-bold me-2">[리뷰 내용]</span>
 
                 {SpoilerAndNowatch && (
@@ -121,13 +130,21 @@ export default function AdminReviewCard({ reviewData, refreshList }) {
                             style={{ fontSize: '0.8rem' }}
                             onClick={OtherText}
                         >
-                            📝 내용 보기
+                            📝 내용 보기 :  
                         </button>
                     </span>
                 )}
 
                 
+                {openReviewId === reviewData.reviewId && (
+                    <div className="mt-2 p-2 border rounded bg-light text-dark">
+                        {reviewData.reviewReportContent}
+                    </div>
+                )}
+                 
+
                 <div className="mt-3">{reviewData.reviewText}</div>
+
             </div>
 
             <div className="action-buttons d-flex justify-content-end flex-wrap gap-2">

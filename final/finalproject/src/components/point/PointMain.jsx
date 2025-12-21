@@ -88,10 +88,6 @@ export default function PointMain() {
                 {/* 1. 상단 대시보드 */}
                 <div className="dashboard-row">
 
-
-                    {/* 1. 상단 대시보드 (프로필 & 출석) */}
-                    <div className="dashboard-row">
-
                         {/* [좌측] 프로필 카드 & 일일 퀘스트 */}
                         <div className="dashboard-left">
                             <StoreProfile refreshTrigger={refreshTrigger} />
@@ -162,17 +158,6 @@ export default function PointMain() {
 
                     {/* 3. 콘텐츠 영역 (하나로 통합) */}
                     <div className="cinema-content">
-                        {tab === "store" && <StoreView loginLevel={loginLevel} refreshPoint={refreshAll} />}
-                        {tab === "roulette" && <Roulette refreshPoint={refreshAll} />}
-                        {tab === "my_icon" && (
-                            <>
-                                <MyIconView refreshPoint={refreshAll} />
-                                <IconListView refreshPoint={refreshAll} />
-                            </>
-                        )}
-
-                        {/* 3. 콘텐츠 영역 */}
-                        <div className="cinema-content">
                             {tab === "store" && <StoreView loginLevel={loginLevel} refreshPoint={refreshAll} />}
                             {tab === "roulette" && <Roulette refreshPoint={refreshAll} />}
                             {tab === "my_icon" && <><MyIconView refreshPoint={refreshAll} /> <IconListView refreshPoint={refreshAll}></IconListView></>}
@@ -190,9 +175,8 @@ export default function PointMain() {
                                     onSuccess={() => { refreshAll(); toast.success("포인트 선물을 보냈습니다! 🎁"); }}
                                 />
                             )}
-                        </div>
                     </div>
-                </div>
+                
             </div>
         </div>
     );

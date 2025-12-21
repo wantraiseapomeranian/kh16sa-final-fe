@@ -80,9 +80,7 @@ export default function MemberMyinfo() {
             {/* 1. 상단 히어로 (배경 + 아이콘 + 신뢰도 게이지) */}
             <div className={`profile-hero-v2 ${!isUrl ? point?.bgSrc : ""}`} style={heroStyle}>
                 <div className="hero-overlay-v2">
-                    <span style={{fontSize:"60px"}}>
-                        <FaFish /> 
-                        </span>
+                    <img src={point?.iconSrc} alt="Icon" className="avatar-img-v2" />
                     <h1 className={`nickname-v2 ms-2 ${point?.nickStyle || ''}`}>
                         {member.memberNickname}
                     </h1>

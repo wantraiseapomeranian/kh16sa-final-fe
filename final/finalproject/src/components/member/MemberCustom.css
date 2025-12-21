@@ -168,3 +168,11 @@ body { background-color: #0c0c0e !important; margin: 0; }
   from { opacity: 0; transform: translateY(30px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+.avatar-img-v2 {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid var(--gold-main);
+    box-shadow: 0 0 15px var(--gold-glow);
+}

@@ -6,7 +6,7 @@ import "./StoreProfile.css";
 
 export default function StoreProfile({ refreshTrigger: prcardRefreshTrigger }) {
     const prcardLoginId = useAtomValue(loginIdState);
-    const prcardPointRefresh = useAtomValue(pointRefreshAtom); 
+    const prcardPointRefresh = useAtomValue(pointRefreshAtom); // InventoryView에서 증가시키는 값
     
     const [prcardUserInfo, setPrcardUserInfo] = useState({
         nickname: "",
@@ -23,6 +23,7 @@ export default function StoreProfile({ refreshTrigger: prcardRefreshTrigger }) {
     useEffect(() => {
         if (!prcardLoginId) return;
         
+        console.log("프로필 데이터를 갱신합니다..."); // 확인용 로그
         setPrcardLoading(true);
         axios.get("/point/main/store/my-info")
             .then(res => {
@@ -31,6 +32,7 @@ export default function StoreProfile({ refreshTrigger: prcardRefreshTrigger }) {
             .catch(err => console.error("프로필 데이터 로드 실패:", err))
             .finally(() => setPrcardLoading(false));
             
+    // prcardPointRefresh가 숫자로 1, 2, 3... 커질 때마다 이 useEffect가 재실행됩니다.
     }, [prcardLoginId, prcardRefreshTrigger, prcardPointRefresh]);
 
     if (!prcardLoginId) return null;
@@ -39,7 +41,6 @@ export default function StoreProfile({ refreshTrigger: prcardRefreshTrigger }) {
 
     return (
         <div className="prcard-store-profile-wrapper">
-            {/* 기존 하이픈 구조 유지 + 앞에 prcard- 추가 */}
             <div className={`prcard-membership-card ${prcardUserInfo.bgSrc ? `prcard-${prcardUserInfo.bgSrc}` : ""} ${prcardUserInfo.frameSrc ? `prcard-${prcardUserInfo.frameSrc}` : ""} ${!prcardIsReady ? 'prcard-loading' : ''}`}>
                 
                 {!prcardIsReady ? (

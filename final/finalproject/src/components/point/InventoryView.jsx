@@ -1,33 +1,44 @@
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import Swal from "sweetalert2"; 
+import Swal from "sweetalert2";
+import { useSetAtom } from "jotai"; // Jotai setter 추가
+import { pointRefreshAtom } from "../../utils/jotai"; // 경로 확인 필요
 import "./InventoryView.css";
 
 export default function InventoryView({ ivRefreshPoint }) {
     const [ivItems, setIvItems] = useState([]);
+    
+    // [추가] 프로필 실시간 갱신을 위한 Atom Setter
+    const setGlobalRefresh = useSetAtom(pointRefreshAtom);
+
+    // 공통 갱신 함수: 내 목록과 전역 프로필을 동시에 새로고침
+    const triggerAllRefresh = useCallback(() => {
+        ivLoadItems(); // 인벤토리 목록 갱신
+        setGlobalRefresh(prev => prev + 1); // 프로필 컴포넌트에 신호 전송 (숫자 증가)
+        if (ivRefreshPoint) ivRefreshPoint(); // 부모에서 내려준 함수가 있다면 실행
+    }, [ivRefreshPoint, setGlobalRefresh]);
 
     // [1] 인벤토리 목록 로드
     const ivLoadItems = useCallback(async () => {
         try {
             const ivResp = await axios.get("/point/main/store/inventory/my");
             setIvItems(ivResp.data);
-        } catch (ivError) { 
-            console.error("인벤토리 로드 실패:", ivError); 
+        } catch (ivError) {
+            console.error("인벤토리 로드 실패:", ivError);
         }
     }, []);
 
-    useEffect(() => { 
-        ivLoadItems(); 
+    useEffect(() => {
+        ivLoadItems();
     }, [ivLoadItems]);
 
     // [2] 사용 및 장착 핸들러
     const ivHandleUse = async (ivTargetItem) => {
-        const ivTargetNo = ivTargetItem.inventoryNo; 
+        const ivTargetNo = ivTargetItem.inventoryNo;
         const ivType = ivTargetItem.pointItemType;
         let ivExtraValue = null;
 
-        // 아이템 유형별 전처리
         if (ivType === "CHANGE_NICK") {
             const { value: ivNickText } = await Swal.fire({
                 title: '닉네임 변경',
@@ -59,7 +70,7 @@ export default function InventoryView({ ivRefreshPoint }) {
             });
             if (!ivHeartConfirm.isConfirmed) return;
         }
-        else if (["DECO_NICK", "DECO_BG", "DECO_ICON", "DECO_FRAME"].includes(ivType)) { 
+        else if (["DECO_NICK", "DECO_BG", "DECO_ICON", "DECO_FRAME"].includes(ivType)) {
             if(ivTargetItem.inventoryEquipped === 'Y') {
                 toast.info("이미 착용 중인 아이템입니다.");
                 return;
@@ -89,25 +100,22 @@ export default function InventoryView({ ivRefreshPoint }) {
 
             try {
                 const ivDrawResp = await axios.post("/point/icon/draw", { inventoryNo: ivTargetNo });
-                const ivResultIcon = ivDrawResp.data; 
+                const ivResultIcon = ivDrawResp.data;
                 
                 await Swal.fire({
                     title: `🎉 ${ivResultIcon.iconRarity} 등급 획득!`,
                     text: `[${ivResultIcon.iconName}] 아이콘을 얻었습니다.`,
                     imageUrl: ivResultIcon.iconSrc,
-                    imageWidth: 100,
-                    imageHeight: 100,
-                    imageAlt: 'icon',
+                    imageWidth: 100, imageHeight: 100,
                     confirmButtonText: '확인',
                     background: '#1a1a1a', color: '#fff',
                     backdrop: `rgba(0,0,123,0.4) url("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJndXpueG94bmZ4bmZ4bmZ4bmZ4bmZ4bmZ4bmZ4bmZ4bmZ4bmZ4JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/26tOZ42Mg6pbMubM4/giphy.gif") center center no-repeat`
                 });
                 
-                ivLoadItems();
-                if (ivRefreshPoint) ivRefreshPoint();
+                triggerAllRefresh(); // 뽑기 성공 시 갱신
                 return;
-            } catch (drawError) { 
-                toast.error("뽑기 실패: " + (drawError.response?.data?.message || "오류 발생")); 
+            } catch (drawError) {
+                toast.error("뽑기 실패: " + (drawError.response?.data?.message || "오류 발생"));
                 return;
             }
         }
@@ -124,7 +132,6 @@ export default function InventoryView({ ivRefreshPoint }) {
             if (!ivBasicConfirm.isConfirmed) return;
         }
 
-        // 실제 서버 통신
         try {
             const ivUseResp = await axios.post("/point/main/store/inventory/use", { 
                 inventoryNo: ivTargetNo, 
@@ -133,14 +140,13 @@ export default function InventoryView({ ivRefreshPoint }) {
             
             if (ivUseResp.data === "success") {
                 toast.success("처리가 완료되었습니다! ✨");
-                ivLoadItems(); 
-                if (ivRefreshPoint) ivRefreshPoint(); 
+                triggerAllRefresh(); // 사용/장착 성공 시 전역 갱신
             } else {
                 const ivMsg = String(ivUseResp.data).startsWith("fail:") ? ivUseResp.data.substring(5) : ivUseResp.data;
                 toast.error(ivMsg);
             }
-        } catch (ivUseError) { 
-            toast.error("처리 중 오류가 발생했습니다."); 
+        } catch (ivUseError) {
+            toast.error("처리 중 오류가 발생했습니다.");
         }
     };
 
@@ -164,8 +170,7 @@ export default function InventoryView({ ivRefreshPoint }) {
 
                 if (ivUnequipResp.data === "success") {
                     toast.success("장착 해제되었습니다.");
-                    ivLoadItems(); 
-                    if (ivRefreshPoint) ivRefreshPoint(); 
+                    triggerAllRefresh(); // 해제 성공 시 전역 갱신
                 } else {
                     toast.error("해제 실패");
                 }
@@ -190,8 +195,7 @@ export default function InventoryView({ ivRefreshPoint }) {
             try {
                 await axios.post("/point/main/store/cancel", { inventoryNo: ivTargetItem.inventoryNo });
                 toast.info("환불 처리가 완료되었습니다. 💸");
-                ivLoadItems();
-                if (ivRefreshPoint) ivRefreshPoint();
+                triggerAllRefresh(); // 환불 성공 시 전역 갱신
             } catch (err) { toast.error("환불 실패"); }
         }
     };
@@ -213,7 +217,7 @@ export default function InventoryView({ ivRefreshPoint }) {
             try {
                 await axios.post("/point/main/store/inventory/delete", { inventoryNo: ivTargetItem.inventoryNo });
                 toast.success("아이템을 성공적으로 버렸습니다.");
-                ivLoadItems();
+                ivLoadItems(); // 단순 삭제는 목록만 갱신 (포인트/프로필 영향 없음)
             } catch (err) { toast.error("삭제 실패"); }
         }
     };

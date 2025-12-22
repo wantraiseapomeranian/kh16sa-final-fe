@@ -62,6 +62,10 @@ export default function AdminMain() {
                     <NavLink to="/admin/inventory" className="list-group-item list-group-item-action admin-menu-item" onClick={closeSidebar}>
                         🎒 인벤토리 관리
                     </NavLink>
+
+                    <NavLink to="/admin/store" className="list-group-item list-group-item-action admin-menu-item" onClick={closeSidebar}>
+                        🏪 상점 관리
+                    </NavLink>
                 </div>
             </div>
 

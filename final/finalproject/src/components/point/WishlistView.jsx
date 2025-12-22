@@ -5,46 +5,48 @@ import { loginIdState } from "../../utils/jotai";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import "./WishlistView.css";
-// 1. 상세 모달 컴포넌트 임포트 (경로는 프로젝트 구조에 맞게 수정하세요)
+// 상세 모달 컴포넌트
 import PointItemDetailView from "./PointitemDetailView"; 
 
-export default function WishlistView({ refreshPoint }) { 
-    const loginId = useAtomValue(loginIdState); 
-    const [wishes, setWishes] = useState([]);
-    const [loading, setLoading] = useState(true);
+export default function WishlistView({ wishlistRefreshPoint }) { 
+    const wishlistLoginId = useAtomValue(loginIdState); 
+    const [wishlistItems, setWishlistItems] = useState([]);
+    const [wishlistLoading, setWishlistLoading] = useState(true);
     
-    // 2. 모달 제어를 위한 상태 추가 (선택된 상품 번호)
-    const [selectedItemNo, setSelectedItemNo] = useState(null);
+    // 모달 제어를 위한 상태 (선택된 상품 번호)
+    const [wishlistSelectedItemNo, setWishlistSelectedItemNo] = useState(null);
 
-    const loadWishes = useCallback(async () => {
-        if (!loginId) {
-            setWishes([]);
-            setLoading(false);
+    // 목록 불러오기 함수
+    const wishlistLoadItems = useCallback(async () => {
+        if (!wishlistLoginId) {
+            setWishlistItems([]);
+            setWishlistLoading(false);
             return;
         }
-        setLoading(true);
+        setWishlistLoading(true);
         try {
-            const response = await axios.get("/point/main/store/wish/my");
-            setWishes(response.data); 
-        } catch (error) {
-            console.error("로드 실패:", error);
+            const wishlistResponse = await axios.get("/point/main/store/wish/my");
+            setWishlistItems(wishlistResponse.data); 
+        } catch (wishlistError) {
+            console.error("로드 실패:", wishlistError);
             toast.error("찜 목록을 불러오지 못했습니다. 😥");
-            setWishes([]);
+            setWishlistItems([]);
         } finally {
-            setLoading(false);
+            setWishlistLoading(false);
         }
-    }, [loginId]);
+    }, [wishlistLoginId]);
 
     useEffect(() => {
-        loadWishes();
-    }, [loadWishes]);
+        wishlistLoadItems();
+    }, [wishlistLoadItems]);
 
-    const handleRemove = async (e, targetItemNo, itemName) => {
-        e.stopPropagation(); // 3. 카드 클릭 이벤트(모달 열기)가 발생하지 않도록 차단
+    // 삭제 핸들러
+    const wishlistHandleRemove = async (wishlistEvent, wishlistTargetNo, wishlistName) => {
+        wishlistEvent.stopPropagation(); // 카드 클릭 이벤트 차단
         
-        const result = await Swal.fire({
+        const wishlistResult = await Swal.fire({
             title: '위시리스트 삭제',
-            text: `[${itemName}] 상품을 찜 목록에서 제거하시겠습니까?`,
+            text: `[${wishlistName}] 상품을 찜 목록에서 제거하시겠습니까?`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
@@ -53,30 +55,30 @@ export default function WishlistView({ refreshPoint }) {
             color: '#fff'
         });
         
-        if (result.isConfirmed) {
+        if (wishlistResult.isConfirmed) {
             try {
-                // 백엔드 엔드포인트에 맞춰 수정 (아까 400에러 났다면 필드명 확인 필수)
-                await axios.post("/point/main/store/wish/toggle", { itemNo: targetItemNo });
+                await axios.post("/point/main/store/wish/toggle", { itemNo: wishlistTargetNo });
                 toast.info("찜 목록에서 삭제되었습니다. 🗑️");
-                loadWishes();
-            } catch (error) {
+                wishlistLoadItems();
+                if(wishlistRefreshPoint) wishlistRefreshPoint(); // 포인트 정보 갱신 필요 시 호출
+            } catch (wishlistRemoveError) {
                 toast.error("삭제에 실패했습니다.");
             }
         }
     };
 
-    if (loading) return (
+    if (wishlistLoading) return (
         <div className="text-center p-5">
             <div className="spinner-border text-primary"></div>
             <p className="text-white mt-2">목록을 불러오는 중...</p>
         </div>
     );
     
-    if (!loginId) return <div className="alert-glass text-center mt-4 m-3">🔒 로그인이 필요한 서비스입니다.</div>;
+    if (!wishlistLoginId) return <div className="wishlist-alert-glass text-center mt-4 m-3">🔒 로그인이 필요한 서비스입니다.</div>;
     
-    if (wishes.length === 0) return (
-        <div className="wish-empty-glass text-center">
-            <span className="wish-empty-icon">💔</span>
+    if (wishlistItems.length === 0) return (
+        <div className="wishlist-empty-glass text-center">
+            <span className="wishlist-empty-icon">💔</span>
             <h5 className="text-white fw-bold mb-2">찜한 상품이 없습니다.</h5>
             <p className="text-secondary small">스토어에서 마음에 드는 상품에 ❤️를 눌러보세요!</p>
         </div>
@@ -86,48 +88,47 @@ export default function WishlistView({ refreshPoint }) {
         <div className="wishlist-wrapper mt-3">
             <div className="d-flex justify-content-between align-items-center mb-4 px-2">
                 <h5 className="fw-bold text-white mb-0">
-                    💖 MY WISHLIST <span className="wish-count-badge">{wishes.length}</span>
+                    💖 MY WISHLIST <span className="wishlist-count-badge">{wishlistItems.length}</span>
                 </h5>
             </div>
             
-            <div className="wish-grid">
-                {wishes.map((w) => (
+            <div className="wishlist-grid">
+                {wishlistItems.map((wishlistItem) => (
                     <div 
-                        className="wish-glass-card" 
-                        key={w.pointWishlistNo}
-                        // 4. 카드 클릭 시 상세 모달 열기
-                        onClick={() => setSelectedItemNo(w.pointWishlistItemNo)} 
+                        className="wishlist-glass-card" 
+                        key={wishlistItem.pointWishlistNo}
+                        onClick={() => setWishlistSelectedItemNo(wishlistItem.pointWishlistItemNo)} 
                         style={{ cursor: 'pointer' }}
                     > 
-                        <div className="wish-img-wrapper">
-                            {w.pointItemSrc ? (
-                                <img src={w.pointItemSrc} alt={w.pointItemName} className="wish-img" />
+                        <div className="wishlist-img-wrapper">
+                            {wishlistItem.pointItemSrc ? (
+                                <img src={wishlistItem.pointItemSrc} alt={wishlistItem.pointItemName} className="wishlist-img" />
                             ) : (
-                                <div className="no-img-box">No Image</div>
+                                <div className="wishlist-no-img-box">No Image</div>
                             )}
 
                             <button 
-                                className="btn-remove-wish-glass"
-                                onClick={(e) => handleRemove(e, w.pointWishlistItemNo, w.pointItemName)}
+                                className="wishlist-btn-remove-glass"
+                                onClick={(wishlistE) => wishlistHandleRemove(wishlistE, wishlistItem.pointWishlistItemNo, wishlistItem.pointItemName)}
                                 title="목록에서 제거"
                             >
                                 ✕
                             </button> 
                         </div>
 
-                        <div className="wish-info">
-                            <h6 className="wish-title-text" title={w.pointItemName}>{w.pointItemName}</h6>
-                            <div className="wish-price-tag">{w.pointItemPrice.toLocaleString()} P</div>
+                        <div className="wishlist-info">
+                            <h6 className="wishlist-title-text" title={wishlistItem.pointItemName}>{wishlistItem.pointItemName}</h6>
+                            <div className="wishlist-price-tag">{wishlistItem.pointItemPrice.toLocaleString()} P</div>
                         </div>
                     </div>
                 ))}
             </div>
 
-            {/* 5. 상세 모달 렌더링 (selectedItemNo가 있을 때만 띄움) */}
-            {selectedItemNo && (
+            {/* 상세 모달 */}
+            {wishlistSelectedItemNo && (
                 <PointItemDetailView
-                    itemNo={selectedItemNo} 
-                    onClose={() => setSelectedItemNo(null)} // 닫기 시 null로 변경
+                    itemNo={wishlistSelectedItemNo} 
+                    onClose={() => setWishlistSelectedItemNo(null)} 
                 />
             )}
         </div>

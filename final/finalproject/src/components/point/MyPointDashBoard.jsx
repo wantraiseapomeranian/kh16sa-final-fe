@@ -1,49 +1,51 @@
 import { useState } from "react";
 import InventoryView from "./InventoryView";
 import HistoryView from "./HistoryView";
+import "./DashBoardView.css";
 
-export default function MyPointDashboard({ refreshPoint }) {
-    const [subTab, setSubTab] = useState("inventory");
+export default function DashBoardView({ refreshPoint: dashRefreshPoint }) {
+    // [1] 서브 탭 상태 관리 (dash 접두사 적용)
+    const [dashSubTab, setDashSubTab] = useState("inventory");
 
     return (
-        <div className="point-dashboard">
-            {/* 1. 서브 탭 메뉴 */}
-            <ul className="nav nav-tabs nav-fill mb-0">
-                <li className="nav-item">
+        <div className="dashContainer">
+            {/* [2] 서브 탭 메뉴 섹션 */}
+            <ul className="dashNavTabs">
+                <li className="dashNavItem">
                     <button 
-                        className={`nav-link ${subTab === 'inventory' ? 'active fw-bold text-dark' : 'text-secondary'}`} 
-                        onClick={() => setSubTab('inventory')}
+                        className={`dashNavLink ${dashSubTab === 'inventory' ? 'active' : ''}`} 
+                        onClick={() => setDashSubTab('inventory')}
                     >
                         📦 아이템 보관함
                     </button>
                 </li>
-                <li className="nav-item">
+                <li className="dashNavItem">
                     <button 
-                        className={`nav-link ${subTab === 'history' ? 'active fw-bold text-dark' : 'text-secondary'}`} 
-                        onClick={() => setSubTab('history')}
+                        className={`dashNavLink ${dashSubTab === 'history' ? 'active' : ''}`} 
+                        onClick={() => setDashSubTab('history')}
                     >
                         📜 포인트 내역
                     </button>
                 </li>
             </ul>
 
-            {/* 2. 내용 표시 영역 (흰색 배경 + 테두리로 깔끔하게) */}
-            <div className="bg-white border border-top-0 rounded-bottom p-3 shadow-sm" style={{ minHeight: '400px' }}>
+            {/* [3] 내용 표시 본문 (유리 질감 스타일 적용) */}
+            <div className="dashContentFrame">
                 
-                {/* 탭 내용 전환 */}
-                {subTab === "inventory" && (
-                    <div className="fade-in">
-                        <div className="alert alert-light border-0 py-2 mb-3">
-                            <small className="text-muted">💡 구매한 아이템을 사용하거나 환불할 수 있습니다.</small>
+                {/* 인벤토리 탭 */}
+                {dashSubTab === "inventory" && (
+                    <div className="dashFadeIn">
+                        <div className="dashAlertInfo">
+                            <small>💡 구매한 아이템을 사용하거나 환불할 수 있습니다.</small>
                         </div>
-                        {/* refreshPoint를 onRefund로 전달하여 아이템 사용/환불 시 상단 포인트 갱신 */}
-                        <InventoryView onRefund={refreshPoint} />
+                        {/* 상단 포인트 갱신 함수를 dash 접두사로 전달 */}
+                        <InventoryView onRefund={dashRefreshPoint} />
                     </div>
                 )}
 
-                {subTab === "history" && (
-                    <div className="fade-in">
-                        {/* HistoryView는 자체적으로 데이터를 로드하므로 별도 props 필요 없음 */}
+                {/* 히스토리 탭 */}
+                {dashSubTab === "history" && (
+                    <div className="dashFadeIn">
                         <HistoryView />
                     </div>
                 )}

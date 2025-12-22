@@ -6,48 +6,48 @@ import { loginIdState } from "../../utils/jotai";
 import Swal from 'sweetalert2';
 import './Roulette.css'; 
 
-// 아이템 설정 (배경색 추가)
-const ROULETTE_ITEMS = [
-    { name: "1000 P", value: 1000, icon: "💰", color: "#f1c40f" }, // 0
-    { name: "다음 기회에", value: 0, icon: "😢", color: "#34495e" }, // 1
-    { name: "꽝", value: 0, icon: "❌", color: "#3498db" },        // 2
-    { name: "꽝", value: 0, icon: "❌", color: "#2c3e50" },        // 3
-    { name: "2000 P", value: 2000, icon: "💎", color: "#a366ff" }, // 4
-    { name: "다음 기회에", value: 0, icon: "😢", color: "#34495e" }, // 5
+// 아이템 설정 (roulette 접두사 적용)
+const rouletteItems = [
+    { name: "1000 P", value: 1000, icon: "💰", color: "#f1c40f" },
+    { name: "다음 기회에", value: 0, icon: "😢", color: "#34495e" },
+    { name: "꽝", value: 0, icon: "❌", color: "#3498db" },
+    { name: "꽝", value: 0, icon: "❌", color: "#2c3e50" },
+    { name: "2000 P", value: 2000, icon: "💎", color: "#a366ff" },
+    { name: "다음 기회에", value: 0, icon: "😢", color: "#34495e" },
 ];
 
-export default function Roulette({ refreshPoint, setTab }) {
-    const loginId = useAtomValue(loginIdState);
-    const [isSpinning, setIsSpinning] = useState(false);
-    const [rotation, setRotation] = useState(0);
-    const [ticketCount, setTicketCount] = useState(0);
+export default function Roulette({ refreshPoint: rouletteRefreshPoint, setTab: rouletteSetTab }) {
+    const rouletteLoginId = useAtomValue(loginIdState);
+    const [rouletteIsSpinning, setRouletteIsSpinning] = useState(false);
+    const [rouletteRotation, setRouletteRotation] = useState(0);
+    const [rouletteTicketCount, setRouletteTicketCount] = useState(0);
 
-    const TICKET_ITEM_TYPE = "RANDOM_ROULETTE";
+    const rouletteTicketItemType = "RANDOM_ROULETTE";
 
-    const loadTicketCount = useCallback(async () => {
-        if (!loginId) return;
+    const rouletteLoadTicketCount = useCallback(async () => {
+        if (!rouletteLoginId) return;
         try {
-            const resp = await axios.get("/point/main/store/inventory/my");
-            const tickets = resp.data.filter(item => item.pointItemType === TICKET_ITEM_TYPE);
-            const total = tickets.reduce((acc, curr) => acc + curr.inventoryQuantity, 0);
-            setTicketCount(total);
-        } catch (e) {
-            console.error("티켓 조회 실패", e);
+            const rouletteResp = await axios.get("/point/main/store/inventory/my");
+            const rouletteTickets = rouletteResp.data.filter(item => item.pointItemType === rouletteTicketItemType);
+            const rouletteTotal = rouletteTickets.reduce((acc, curr) => acc + curr.inventoryQuantity, 0);
+            setRouletteTicketCount(rouletteTotal);
+        } catch (rouletteError) {
+            console.error("티켓 조회 실패", rouletteError);
         }
-    }, [loginId]);
+    }, [rouletteLoginId]);
 
     useEffect(() => {
-        loadTicketCount();
-    }, [loadTicketCount]);
+        rouletteLoadTicketCount();
+    }, [rouletteLoadTicketCount]);
 
-    const handleSpin = async () => {
-        if (isSpinning) return;
-        if (ticketCount <= 0) {
+    const rouletteHandleSpin = async () => {
+        if (rouletteIsSpinning) return;
+        if (rouletteTicketCount <= 0) {
             toast.warning("🎟️ 룰렛 이용권이 없습니다. 상점에서 구매해주세요!");
             return;
         }
 
-        const confirmResult = await Swal.fire({
+        const rouletteConfirmResult = await Swal.fire({
             title: 'LUCKY SPIN!',
             text: `이용권 1장을 사용하여 룰렛을 돌리시겠습니까?`,
             icon: 'question',
@@ -60,29 +60,28 @@ export default function Roulette({ refreshPoint, setTab }) {
             color: '#fff'
         });
 
-        if (!confirmResult.isConfirmed) return;
+        if (!rouletteConfirmResult.isConfirmed) return;
 
-        setIsSpinning(true);
+        setRouletteIsSpinning(true);
 
         try {
-            const resp = await axios.post("/point/main/store/roulette");
-            const resultIndex = resp.data; // 서버에서 오는 인덱스 (0~5)
+            const rouletteResp = await axios.post("/point/main/store/roulette");
+            const rouletteResultIndex = rouletteResp.data; 
 
-            const segmentAngle = 360 / ROULETTE_ITEMS.length; // 60도
-            const additionalSpins = 360 * 10; // 10바퀴 회전 효과
+            const rouletteSegmentAngle = 360 / rouletteItems.length; // 60도
+            const rouletteAdditionalSpins = 360 * 10; 
             
-            // [계산] 현재 각도 초기화 + 10바퀴 + (인덱스에 해당하는 각도만큼 역회전하여 12시로 맞춤)
-            const targetRotation = rotation + additionalSpins - (resultIndex * segmentAngle) - (rotation % 360);
-            setRotation(targetRotation);
+            const rouletteTargetRotation = rouletteRotation + rouletteAdditionalSpins - (rouletteResultIndex * rouletteSegmentAngle) - (rouletteRotation % 360);
+            setPointRotation(rouletteTargetRotation);
 
             setTimeout(async () => {
-                const winItem = ROULETTE_ITEMS[resultIndex];
+                const rouletteWinItem = rouletteItems[rouletteResultIndex];
                 
-                if (winItem.value > 0) {
+                if (rouletteWinItem.value > 0) {
                     await Swal.fire({
                         title: `🎊 당첨을 축하합니다!`,
-                        html: `<div style="font-size: 1.2rem; margin-bottom: 10px;">결과: <b>${winItem.name}</b></div>
-                               <div style="color: #f1c40f;">${winItem.value} 포인트가 지급되었습니다!</div>`,
+                        html: `<div style="font-size: 1.2rem; margin-bottom: 10px;">결과: <b>${rouletteWinItem.name}</b></div>
+                               <div style="color: #f1c40f;">${rouletteWinItem.value} 포인트가 지급되었습니다!</div>`,
                         icon: 'success',
                         background: '#1a1a1a',
                         color: '#fff',
@@ -91,7 +90,7 @@ export default function Roulette({ refreshPoint, setTab }) {
                 } else {
                     await Swal.fire({
                         title: `아쉬워요!`,
-                        text: `결과: ${winItem.name}`,
+                        text: `결과: ${rouletteWinItem.name}`,
                         icon: 'info',
                         background: '#1a1a1a',
                         color: '#fff',
@@ -99,68 +98,68 @@ export default function Roulette({ refreshPoint, setTab }) {
                     });
                 }
                 
-                setIsSpinning(false);
-                loadTicketCount();
-                if (refreshPoint) refreshPoint();
+                setRouletteIsSpinning(false);
+                rouletteLoadTicketCount();
+                if (rouletteRefreshPoint) rouletteRefreshPoint();
             }, 4000);
 
-        } catch (e) {
-            console.error(e);
+        } catch (rouletteError) {
+            console.error(rouletteError);
             toast.error("룰렛 서버 통신 중 오류가 발생했습니다.");
-            setIsSpinning(false);
+            setRouletteIsSpinning(false);
         }
     };
 
     return (
-        <div className="roulette-wrapper">
-            <div className="roulette-glass-card">
-                <h2 className="roulette-title">🎰 LUCKY SPIN</h2>
+        <div className="roulette-roulette-wrapper">
+            <div className="roulette-roulette-glass-card">
+                <h2 className="roulette-roulette-title">🎰 LUCKY SPIN</h2>
                 
-                <div className="ticket-status-box">
-                    <div className="ticket-badge">
-                        🎟️ 보유 이용권: <b>{ticketCount}</b>장
+                <div className="roulette-ticket-status-box">
+                    <div className="roulette-ticket-badge">
+                        🎟️ 보유 이용권: <b>{rouletteTicketCount}</b>장
                     </div>
                 </div>
 
-                <div className="wheel-outer">
-                    <div className="wheel-indicator">▼</div>
+                <div className="roulette-wheel-outer">
+                    <div className="roulette-wheel-indicator">▼</div>
                     <div 
-                        className="wheel-main"
+                        className="roulette-wheel-main"
                         style={{ 
-                            transform: `rotate(${rotation}deg)`,
-                            transition: isSpinning ? 'transform 4s cubic-bezier(0.15, 0, 0, 1)' : 'none'
+                            transform: `rotate(${rouletteRotation}deg)`,
+                            transition: rouletteIsSpinning ? 'transform 4s cubic-bezier(0.15, 0, 0, 1)' : 'none'
                         }}
                     >
-                        {ROULETTE_ITEMS.map((item, index) => (
+                        {rouletteItems.map((rouletteItem, rouletteIndex) => (
                             <div 
-                                key={index} 
-                                className="wheel-sec" 
+                                key={rouletteIndex} 
+                                className="roulette-wheel-sec" 
                                 style={{ 
-                                    transform: `rotate(${index * 60}deg)`,
-                                    backgroundColor: item.color
+                                    transform: `rotate(${rouletteIndex * 60}deg)`,
+                                    backgroundColor: rouletteItem.color
                                 }}
                             >
-                                <div className="sec-content">
-                                    <span className="sec-icon">{item.icon}</span>
-                                    <span className="sec-text">{item.name}</span>
+                                <div className="roulette-sec-content">
+                                    <span className="roulette-sec-icon">{rouletteItem.icon}</span>
+                                    <span className="roulette-sec-text">{rouletteItem.name}</span>
                                 </div>
                             </div>
                         ))}
                     </div>
-                    <div className="wheel-center-pin">GO</div>
+                    <div className="roulette-wheel-center-pin">GO</div>
                 </div>
 
-                <div className="spin-action-area">
+                <div className="roulette-spin-action-area">
                     <button 
-                        className={`btn-spin-glass ${ticketCount === 0 ? 'no-ticket' : ''}`}
-                        onClick={handleSpin}
-                        disabled={isSpinning || ticketCount === 0}
+                        className={`roulette-btn-spin-glass ${rouletteTicketCount === 0 ? 'roulette-no-ticket' : ''}`}
+                        onClick={rouletteHandleSpin}
+                        disabled={rouletteIsSpinning || rouletteTicketCount === 0}
                     >
-                        {isSpinning ? "행운을 비는 중..." : ticketCount > 0 ? "지금 돌리기" : "이용권 부족"}
+                        {rouletteIsSpinning ? "행운을 비는 중..." : rouletteTicketCount > 0 ? "지금 돌리기" : "이용권 부족"}
                     </button>
                     
-                    {ticketCount === 0 && !isSpinning && (
-                        <div className="shop-link-hint" onClick={() => setTab('store')}>
+                    {rouletteTicketCount === 0 && !rouletteIsSpinning && (
+                        <div className="roulette-shop-link-hint" onClick={() => rouletteSetTab('store')}>
                             🍿 상점에서 룰렛 이용권 구매하기 ➔
                         </div>
                     )}
@@ -168,4 +167,4 @@ export default function Roulette({ refreshPoint, setTab }) {
             </div>
         </div>
     );
-}   
+}

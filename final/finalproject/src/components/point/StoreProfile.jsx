@@ -4,80 +4,76 @@ import { useAtomValue } from "jotai";
 import { loginIdState, pointRefreshAtom } from "../../utils/jotai"; 
 import "./StoreProfile.css"; 
 
-export default function StoreProfile({ refreshTrigger }) {
-    const loginId = useAtomValue(loginIdState);
-    const pointRefresh = useAtomValue(pointRefreshAtom); // 전역 새로고침 신호 감지
+export default function StoreProfile({ refreshTrigger: prcardRefreshTrigger }) {
+    const prcardLoginId = useAtomValue(loginIdState);
+    const prcardPointRefresh = useAtomValue(pointRefreshAtom); 
     
-    const [userInfo, setUserInfo] = useState({
+    const [prcardUserInfo, setPrcardUserInfo] = useState({
         nickname: "",
         point: 0,
         level: "",
         iconSrc: null,
         nickStyle: "",
-        frameSrc: "", // frame-gold, frame-fire 등
-        bgSrc: ""     // bg-ice, bg-fallout 등
+        frameSrc: "", 
+        bgSrc: ""     
     });
 
-    const [loading, setLoading] = useState(true);
+    const [prcardLoading, setPrcardLoading] = useState(true);
 
     useEffect(() => {
-        if (!loginId) return;
+        if (!prcardLoginId) return;
         
-        setLoading(true);
+        setPrcardLoading(true);
         axios.get("/point/main/store/my-info")
             .then(res => {
-                if (res.data) setUserInfo(res.data);
+                if (res.data) setPrcardUserInfo(res.data);
             })
             .catch(err => console.error("프로필 데이터 로드 실패:", err))
-            .finally(() => setLoading(false));
+            .finally(() => setPrcardLoading(false));
             
-    }, [loginId, refreshTrigger, pointRefresh]); // 구매/장착 신호 발생 시 자동 재로드
+    }, [prcardLoginId, prcardRefreshTrigger, prcardPointRefresh]);
 
-    if (!loginId) return null;
+    if (!prcardLoginId) return null;
 
-    // 데이터 로딩 중이거나 닉네임이 없을 때 틀이 깨지지 않게 처리
-    const isReady = userInfo.nickname || !loading;
+    const prcardIsReady = prcardUserInfo.nickname || !prcardLoading;
 
     return (
-        <div className="store-profile-wrapper">
-            {/* 배경(bgSrc)과 프레임(frameSrc) 클래스를 동시에 동적 바인딩 */}
-            <div className={`membership-card ${userInfo.bgSrc || ""} ${userInfo.frameSrc || ""} ${!isReady ? 'loading' : ''}`}>
-            {/* <div className={`membership-card ${userInfo.bgSrc || ""}  ${!isReady ? 'loading' : ''}`}> */}
+        <div className="prcard-store-profile-wrapper">
+            {/* 기존 하이픈 구조 유지 + 앞에 prcard- 추가 */}
+            <div className={`prcard-membership-card ${prcardUserInfo.bgSrc ? `prcard-${prcardUserInfo.bgSrc}` : ""} ${prcardUserInfo.frameSrc ? `prcard-${prcardUserInfo.frameSrc}` : ""} ${!prcardIsReady ? 'prcard-loading' : ''}`}>
                 
-                {!isReady ? (
-                    <div className="loading-box">
-                        <span className="loading-text">Member Information Loading...</span>
+                {!prcardIsReady ? (
+                    <div className="prcard-loading-box">
+                        <span className="prcard-loading-text">Member Information Loading...</span>
                     </div>
                 ) : (
                     <>
-                        {/* 왼쪽: 아바타 및 유저 정보 */}
-                        <div className="card-user-info">
-                            <div className="card-avatar-box">
-                                {userInfo.iconSrc ? (
-                                    <img src={userInfo.iconSrc} alt="avatar" className="card-avatar-img" />
+                        <div className="prcard-card-user-info">
+                            <div className="prcard-card-avatar-box">
+                                {prcardUserInfo.iconSrc ? (
+                                    <img src={prcardUserInfo.iconSrc} alt="avatar" className="prcard-card-avatar-img" />
                                 ) : (
-                                    <div className="default-avatar">👤</div>
+                                    <div className="prcard-default-avatar">👤</div>
                                 )}
                             </div>
                             
-                            <div className="card-text-group">
-                                <div className={`card-nickname ${userInfo.nickStyle || ""}`}>
-                                    {userInfo.nickname || loginId}
+                            <div className="prcard-card-text-group">
+                                <div className={`prcard-card-nickname ${prcardUserInfo.nickStyle ? `prcard-${prcardUserInfo.nickStyle}` : ""}`}>
+                                    {prcardUserInfo.nickname || prcardLoginId}
                                 </div>
-                                <div className="card-grade">
-                                    <span className={`badge-level ${userInfo.level === '관리자' ? 'admin' : ''}`}>
-                                        👑 {userInfo.level || "MEMBER"}
+                                <div className="prcard-card-grade">
+                                    <span className={`prcard-badge-level ${prcardUserInfo.level === '관리자' ? 'prcard-admin' : ''}`}>
+                                        👑 {prcardUserInfo.level || "MEMBER"}
                                     </span>
                                 </div>
                             </div>
                         </div>
 
-                        {/* 오른쪽: 포인트 정보 */}
-                        <div className="card-point-wallet">
-                            <span className="wallet-label">CURRENT BALANCE</span>
-                            <div className="wallet-amount">
-                                {userInfo.point?.toLocaleString() || 0}
-                                <span className="currency-unit">P</span>
+                        <div className="prcard-card-point-wallet">
+                            <span className="prcard-wallet-label">CURRENT BALANCE</span>
+                            <div className="prcard-wallet-amount">
+                                {prcardUserInfo.point?.toLocaleString() || 0}
+                                <span className="prcard-currency-unit">P</span>
                             </div>
                         </div>
                     </>

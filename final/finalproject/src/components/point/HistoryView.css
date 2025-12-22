@@ -1,11 +1,9 @@
-/* HistoryView.css */
-.history-glass-wrapper {
+.historyGlassWrapper {
     padding: 10px;
     color: #fff;
 }
 
-/* 헤더 스타일 */
-.history-header-glass {
+.historyHeaderGlass {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
@@ -13,20 +11,19 @@
     padding: 0 10px;
 }
 
-.title-glass {
+.historyTitleGlass {
     font-family: 'Black Han Sans', sans-serif;
     font-size: 1.8rem;
     color: #00d2d3;
     margin: 0;
 }
 
-.total-cnt-glass {
+.historyTotalCntGlass {
     font-size: 0.85rem;
     color: #888;
 }
 
-/* 필터 버튼 스타일 */
-.glass-filter-group {
+.historyFilterGroup {
     display: flex;
     background: rgba(255, 255, 255, 0.05);
     padding: 5px;
@@ -34,7 +31,7 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.glass-filter-btn {
+.historyFilterBtn {
     border: none;
     background: transparent;
     color: #888;
@@ -44,22 +41,21 @@
     transition: 0.3s;
 }
 
-.glass-filter-btn.active {
+.historyFilterBtn.active {
     background: #00d2d3;
     color: #000;
     font-weight: bold;
     box-shadow: 0 4px 15px rgba(0, 210, 211, 0.3);
 }
 
-/* 테이블 리스트 프레임 */
-.history-list-frame {
+.historyListFrame {
     background: rgba(255, 255, 255, 0.03);
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.08);
     overflow: hidden;
 }
 
-.list-header-row {
+.historyListHeaderRow {
     display: flex;
     padding: 15px 20px;
     background: rgba(255, 255, 255, 0.05);
@@ -70,8 +66,7 @@
     letter-spacing: 1px;
 }
 
-/* 로우(Row) 공통 스타일 */
-.history-row {
+.historyRow {
     display: flex;
     align-items: center;
     padding: 15px 20px;
@@ -79,46 +74,46 @@
     transition: 0.2s;
 }
 
-.history-row:hover {
+.historyRow:hover {
     background: rgba(255, 255, 255, 0.05);
 }
 
-/* 컬럼별 너비 설정 */
-.col-w-date { width: 80px; text-align: center; }
-.col-w-type { width: 100px; text-align: center; }
-.col-w-desc { flex: 1; padding: 0 20px; text-align: left; }
-.col-w-amount { width: 120px; text-align: right; }
+.historyColDate { width: 80px; text-align: center; }
+.historyColType { width: 100px; text-align: center; }
+.historyColDesc { flex: 1; padding: 0 20px; text-align: left; }
+.historyColAmount { width: 120px; text-align: right; }
 
-.row-date { font-weight: bold; font-size: 0.95rem; }
-.row-time { font-size: 0.75rem; }
+.historyRowDate { font-weight: bold; font-size: 0.95rem; }
+.historyRowTime { font-size: 0.75rem; }
 
-/* 유형 뱃지 스타일 */
-.type-badge-glass {
+.historyTypeBadgeGlass {
     font-size: 0.7rem;
     padding: 3px 8px;
     border-radius: 6px;
     font-weight: bold;
     text-transform: uppercase;
 }
-.type-badge-glass.get { background: rgba(0, 210, 211, 0.1); color: #00d2d3; border: 1px solid #00d2d3; }
-.type-badge-glass.use { background: rgba(255, 71, 87, 0.1); color: #ff4757; border: 1px solid #ff4757; }
-.type-badge-glass.send { background: rgba(255, 159, 67, 0.1); color: #ff9f43; border: 1px solid #ff9f43; }
-.type-badge-glass.received { background: rgba(84, 160, 255, 0.1); color: #54a0ff; border: 1px solid #54a0ff; }
 
-/* 금액 색상 */
-.amt-plus { color: #00d2d3; font-weight: bold; }
-.amt-minus { color: #ff4757; font-weight: bold; }
-.amt-text { font-size: 1.1rem; }
-.amt-unit { font-size: 0.75rem; margin-left: 3px; }
+/* 타입별 색상 접두사 적용 */
+.historyTypeGET { background: rgba(0, 210, 211, 0.1); color: #00d2d3; border: 1px solid #00d2d3; }
+.historyTypeUSE { background: rgba(255, 71, 87, 0.1); color: #ff4757; border: 1px solid #ff4757; }
+.historyTypeSEND { background: rgba(255, 159, 67, 0.1); color: #ff9f43; border: 1px solid #ff9f43; }
+.historyTypeRECEIVED { background: rgba(84, 160, 255, 0.1); color: #54a0ff; border: 1px solid #54a0ff; }
 
-/* 페이지네이션 스타일 */
-.glass-pagination {
+.historyAmtPlus { color: #00d2d3; font-weight: bold; }
+.historyAmtMinus { color: #ff4757; font-weight: bold; }
+.historyAmtZero { color: #888; }
+.historyAmtText { font-size: 1.1rem; }
+.historyAmtUnit { font-size: 0.75rem; margin-left: 3px; }
+
+.historyPagination {
     display: flex;
     justify-content: center;
     gap: 8px;
+    margin-top: 20px;
 }
 
-.glass-page-btn {
+.historyPageBtn {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: #aaa;
@@ -128,20 +123,19 @@
     transition: 0.3s;
 }
 
-.glass-page-btn.active {
+.historyPageBtn.active {
     background: #00d2d3;
     color: #000;
     font-weight: bold;
     border-color: #00d2d3;
 }
 
-.glass-page-btn:hover:not(.active) {
+.historyPageBtn:hover:not(.active) {
     background: rgba(255, 255, 255, 0.1);
     color: #fff;
 }
 
-/* 텅 빈 상태 */
-.empty-history {
+.historyEmptyBox {
     padding: 60px 0;
     text-align: center;
     color: #555;
@@ -150,4 +144,6 @@
     align-items: center;
     gap: 10px;
 }
-.empty-icon { font-size: 3rem; opacity: 0.3; }
+.historyEmptyIcon { font-size: 3rem; opacity: 0.3; }
+.historyMe2 { margin-right: 0.5rem; }
+.historyTextSecondary { color: #888; }

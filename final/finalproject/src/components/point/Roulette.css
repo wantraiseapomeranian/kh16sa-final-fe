@@ -1,14 +1,13 @@
-/* Roulette.css */
 @import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap');
 
-.roulette-wrapper {
+.roulette-roulette-wrapper {
     display: flex;
     justify-content: center;
     padding: 20px;
 }
 
-.roulette-glass-card {
-    background: #2c2c2c; /* 배경을 어둡게 하여 골드 테마 강조 */
+.roulette-roulette-glass-card {
+    background: #2c2c2c;
     border-radius: 30px;
     padding: 40px;
     width: 420px;
@@ -16,38 +15,41 @@
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
-.roulette-title {
+.roulette-roulette-title {
     font-family: 'Black Han Sans', sans-serif;
     font-size: 2.2rem;
     color: #f1c40f;
     margin-bottom: 15px;
 }
 
-.ticket-badge {
+.roulette-ticket-status-box {
+    margin-bottom: 25px;
+}
+
+.roulette-ticket-badge {
     display: inline-block;
     background: rgba(241, 196, 15, 0.1);
     border: 1px solid #f1c40f;
     color: #f1c40f;
     padding: 6px 16px;
     border-radius: 20px;
-    margin-bottom: 25px;
     font-weight: bold;
 }
 
-/* 룰렛 외곽 노란 테두리 */
-.wheel-outer {
+/* 룰렛 외곽 */
+.roulette-wheel-outer {
     position: relative;
     width: 320px;
     height: 320px;
     margin: 0 auto 30px;
     border: 8px solid #f1c40f;
     border-radius: 50%;
-    background: #f1c40f; /* 조각 사이 틈새 방지 */
+    background: #f1c40f; 
     box-shadow: 0 0 15px rgba(241, 196, 15, 0.5);
 }
 
-/* 상단 지시계 (빨간 화살표) */
-.wheel-indicator {
+/* 지시계 */
+.roulette-wheel-indicator {
     position: absolute;
     top: -20px;
     left: 50%;
@@ -58,7 +60,7 @@
     filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
 }
 
-.wheel-main {
+.roulette-wheel-main {
     width: 100%;
     height: 100%;
     position: relative;
@@ -67,22 +69,20 @@
     background: #444;
 }
 
-/* [핵심] 6등분 조각 설정 (60도씩) */
-.wheel-sec {
+/* 6등분 조각 */
+.roulette-wheel-sec {
     position: absolute;
     width: 100%;
     height: 100%;
     top: 0;
     left: 0;
     transform-origin: 50% 50%;
-    /* 6등분 부채꼴을 위한 정밀 좌표 (21.1%와 78.9%가 60도를 형성함) */
     clip-path: polygon(50% 50%, 21.1% 0%, 78.9% 0%);
 }
 
-/* 조각 내부 콘텐츠 위치 (아이콘, 글자) */
-.sec-content {
+.roulette-sec-content {
     position: absolute;
-    top: 10%; /* 조각 상단에서 약간 아래로 배치 */
+    top: 10%;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -92,20 +92,20 @@
     font-family: 'Black Han Sans', sans-serif;
 }
 
-.sec-icon {
+.roulette-sec-icon {
     font-size: 1.8rem;
     margin-bottom: 5px;
 }
 
-.sec-text {
+.roulette-sec-text {
     font-size: 0.95rem;
     line-height: 1.2;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
     white-space: nowrap;
 }
 
-/* 중앙 GO 고정 핀 */
-.wheel-center-pin {
+/* 중앙 핀 */
+.roulette-wheel-center-pin {
     position: absolute;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
@@ -123,7 +123,15 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
-.btn-spin-glass {
+/* 실행 영역 */
+.roulette-spin-action-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.roulette-btn-spin-glass {
     font-family: 'Black Han Sans', sans-serif;
     background: linear-gradient(45deg, #f1c40f, #e67e22);
     border: none;
@@ -135,8 +143,9 @@
     transition: 0.2s;
 }
 
-.btn-spin-glass:active { transform: scale(0.95); }
-.btn-spin-glass:disabled { opacity: 0.6; cursor: not-allowed; background: #555; }
+.roulette-btn-spin-glass:active { transform: scale(0.95); }
+.roulette-btn-spin-glass:disabled { opacity: 0.6; cursor: not-allowed; background: #555; }
+.roulette-btn-spin-glass.roulette-no-ticket { filter: grayscale(1); }
 
-.shop-link-hint { margin-top: 15px; color: #888; cursor: pointer; font-size: 0.9rem; }
-.shop-link-hint:hover { color: #f1c40f; text-decoration: underline; }
+.roulette-shop-link-hint { color: #888; cursor: pointer; font-size: 0.9rem; }
+.roulette-shop-link-hint:hover { color: #f1c40f; text-decoration: underline; }

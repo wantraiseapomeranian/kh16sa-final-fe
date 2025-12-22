@@ -1,191 +1,178 @@
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
-import { FaHistory, FaFilter, FaInbox } from "react-icons/fa"; // 아이콘 라이브러리 권장
+import { FaHistory, FaInbox } from "react-icons/fa";
 import "./HistoryView.css"; 
 
 export default function HistoryView() {
+    // [1] 상태 관리 변수 (history 접두사 적용)
     const [historyList, setHistoryList] = useState([]);
-    
-    // 페이지네이션 상태
-    const [page, setPage] = useState(1);
-    const [totalPage, setTotalPage] = useState(0);
-    const [totalCount, setTotalCount] = useState(0);
+    const [historyPage, setHistoryPage] = useState(1);
+    const [historyTotalPage, setHistoryTotalPage] = useState(0);
+    const [historyTotalCount, setHistoryTotalCount] = useState(0);
+    const [historyFilterType, setHistoryFilterType] = useState("all"); 
 
-    // 필터 상태 (all, earn, use)
-    const [filterType, setFilterType] = useState("all"); 
-
-    // [1] 데이터 로드 로직
-    const loadHistory = useCallback(async () => {
+    // [2] 데이터 로드 로직
+    const historyLoadData = useCallback(async () => {
         try {
-            // 백엔드: PointRestController의 @GetMapping("/history") 호출
-            const resp = await axios.get("/point/history", {
+            const historyResponse = await axios.get("/point/history", {
                 params: {
-                    page: page,
-                    type: filterType
+                    page: historyPage,
+                    type: historyFilterType
                 }
             });
-            const data = resp.data;
+            const historyData = historyResponse.data;
             
-            setHistoryList(data.list || []); 
-            setTotalPage(data.totalPage || 0);
-            setTotalCount(data.totalCount || 0); 
-        } catch (e) {
-            console.error("포인트 내역 로드 중 오류 발생:", e);
+            setHistoryList(historyData.list || []); 
+            setHistoryTotalPage(historyData.totalPage || 0);
+            setHistoryTotalCount(historyData.totalCount || 0); 
+        } catch (historyError) {
+            console.error("history 데이터 로드 중 오류:", historyError);
         }
-    }, [page, filterType]);
+    }, [historyPage, historyFilterType]);
 
     useEffect(() => {
-        loadHistory();
-    }, [loadHistory]);
+        historyLoadData();
+    }, [historyLoadData]);
 
-    // [2] 필터 및 페이지 변경 핸들러
-    const handleFilterChange = (type) => {
-        setFilterType(type);
-        setPage(1); 
+    // [3] 이벤트 핸들러
+    const historyHandleFilterChange = (historyType) => {
+        setHistoryFilterType(historyType);
+        setHistoryPage(1); 
     };
 
-    const handlePageChange = (newPage) => {
-        if (newPage >= 1 && (totalPage === 0 || newPage <= totalPage)) {
-            setPage(newPage);
+    const historyHandlePageChange = (historyNewPage) => {
+        if (historyNewPage >= 1 && (historyTotalPage === 0 || historyNewPage <= historyTotalPage)) {
+            setHistoryPage(historyNewPage);
         }
     };
 
-    // [3] 상세 설명 출력 로직 (Reason 필드 활용)
-    const getHistoryDescription = (item) => {
-        if (item.pointHistoryReason) return item.pointHistoryReason;
+    // [4] 유틸리티 함수
+    const historyGetDescription = (historyItem) => {
+        if (historyItem.pointHistoryReason) return historyItem.pointHistoryReason;
 
-        const type = item.pointHistoryTrxType;
-        const amt = item.pointHistoryAmount;
+        const historyTrxType = historyItem.pointHistoryTrxType;
+        const historyAmt = historyItem.pointHistoryAmount;
 
-        switch(type) {
+        switch(historyTrxType) {
             case "USE": return "아이템 구매 또는 서비스 이용";
-            case "GET": return amt > 0 ? "이벤트 또는 퀘스트 보상" : "포인트 변동";
+            case "GET": return historyAmt > 0 ? "이벤트 또는 퀘스트 보상" : "포인트 변동";
             case "SEND": return "다른 회원에게 포인트 선물";
             case "RECEIVED": return "회원님에게 도착한 포인트 선물";
             default: return "시스템 포인트 조정";
         }
     };
 
-    // 날짜 포맷 (MM.DD)
-    const formatDate = (dateString) => {
-        if (!dateString) return "-";
-        const d = new Date(dateString);
-        return `${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+    const historyFormatDate = (historyDateString) => {
+        if (!historyDateString) return "-";
+        const historyD = new Date(historyDateString);
+        return `${String(historyD.getMonth() + 1).padStart(2, '0')}.${String(historyD.getDate()).padStart(2, '0')}`;
     };
 
-    // 시간 포맷 (HH:mm)
-    const formatTime = (dateString) => {
-        if (!dateString) return "-";
-        const d = new Date(dateString);
-        return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+    const historyFormatTime = (historyDateString) => {
+        if (!historyDateString) return "-";
+        const historyD = new Date(historyDateString);
+        return `${String(historyD.getHours()).padStart(2, '0')}:${String(historyD.getMinutes()).padStart(2, '0')}`;
     };
     
-    // [4] 페이지네이션 버튼 렌더링
-    const renderPagination = () => {
-        if (totalPage <= 1) return null;
+    // [5] 페이지네이션 렌더링
+    const historyRenderPagination = () => {
+        if (historyTotalPage <= 1) return null;
         
-        const pages = [];
-        let startPage = Math.max(1, page - 2);
-        let endPage = Math.min(totalPage, startPage + 4);
+        const historyPages = [];
+        let historyStartPage = Math.max(1, historyPage - 2);
+        let historyEndPage = Math.min(historyTotalPage, historyStartPage + 4);
         
-        if (endPage === totalPage) {
-            startPage = Math.max(1, endPage - 4);
+        if (historyEndPage === historyTotalPage) {
+            historyStartPage = Math.max(1, historyEndPage - 4);
         }
 
-        for (let i = startPage; i <= endPage; i++) {
-            pages.push(
+        for (let i = historyStartPage; i <= historyEndPage; i++) {
+            historyPages.push(
                 <button 
                     key={i} 
-                    className={`glass-page-btn ${i === page ? 'active' : ''}`} 
-                    onClick={() => handlePageChange(i)}
+                    className={`historyPageBtn ${i === historyPage ? 'active' : ''}`} 
+                    onClick={() => historyHandlePageChange(i)}
                 > {i} </button>
             );
         }
 
         return (
-            <div className="glass-pagination mt-4">
-                <button className="glass-page-btn arrow" onClick={() => handlePageChange(1)} disabled={page === 1}>&laquo;</button>
-                {pages}
-                <button className="glass-page-btn arrow" onClick={() => handlePageChange(totalPage)} disabled={page === totalPage}>&raquo;</button>
+            <div className="historyPagination historyMt4">
+                <button className="historyPageBtn arrow" onClick={() => historyHandlePageChange(1)} disabled={historyPage === 1}>&laquo;</button>
+                {historyPages}
+                <button className="historyPageBtn arrow" onClick={() => historyHandlePageChange(historyTotalPage)} disabled={historyPage === historyTotalPage}>&raquo;</button>
             </div>
         );
     };
 
     return (
-        <div className="history-glass-wrapper animate__animated animate__fadeIn">
-            
-            {/* 상단 헤더 섹션 */}
-            <div className="history-header-glass">
-                <div className="header-title-box">
-                    <h4 className="title-glass"><FaHistory className="me-2"/>Transaction Log</h4>
-                    <span className="total-cnt-glass">총 {totalCount.toLocaleString()}건의 내역</span>
+        <div className="historyGlassWrapper animate__animated animate__fadeIn">
+            <div className="historyHeaderGlass">
+                <div className="historyHeaderTitleBox">
+                    <h4 className="historyTitleGlass"><FaHistory className="historyMe2"/>Transaction Log</h4>
+                    <span className="historyTotalCntGlass">총 {historyTotalCount.toLocaleString()}건의 내역</span>
                 </div>
                 
-                {/* 필터 탭 */}
-                <div className="glass-filter-group">
+                <div className="historyFilterGroup">
                     {[
                         { id: 'all', label: '전체' },
                         { id: 'earn', label: '적립' },
                         { id: 'use', label: '사용' },
-                    ].map(btn => (
+                    ].map(historyBtn => (
                         <button 
-                            key={btn.id}
-                            className={`glass-filter-btn ${filterType === btn.id ? 'active' : ''}`}
-                            onClick={() => handleFilterChange(btn.id)}
+                            key={historyBtn.id}
+                            className={`historyFilterBtn ${historyFilterType === historyBtn.id ? 'active' : ''}`}
+                            onClick={() => historyHandleFilterChange(historyBtn.id)}
                         >
-                            {btn.label}
+                            {historyBtn.label}
                         </button>
                     ))}
                 </div>
             </div>
 
-            {/* 리스트 본문 */}
-            <div className="history-list-frame">
-                <div className="list-header-row">
-                    <span className="col-w-date">일시</span>
-                    <span className="col-w-type">유형</span>
-                    <span className="col-w-desc">상세 내용</span>
-                    <span className="col-w-amount">변동 금액</span>
+            <div className="historyListFrame">
+                <div className="historyListHeaderRow">
+                    <span className="historyColDate">일시</span>
+                    <span className="historyColType">유형</span>
+                    <span className="historyColDesc">상세 내용</span>
+                    <span className="historyColAmount">변동 금액</span>
                 </div>
 
-                <div className="list-body-scroll">
+                <div className="historyListBodyScroll">
                     {historyList.length === 0 ? (
-                        <div className="empty-history">
-                            <FaInbox className="empty-icon" />
+                        <div className="historyEmptyBox">
+                            <FaInbox className="historyEmptyIcon" />
                             <span>표시할 포인트 내역이 없습니다.</span>
                         </div>
                     ) : (
-                        historyList.map((item) => {
-                            const isPositive = item.pointHistoryAmount > 0;
-                            const isZero = item.pointHistoryAmount === 0;
-                            const amountClass = isZero ? "amt-zero" : (isPositive ? "amt-plus" : "amt-minus");
+                        historyList.map((historyItem) => {
+                            const historyIsPositive = historyItem.pointHistoryAmount > 0;
+                            const historyIsZero = historyItem.pointHistoryAmount === 0;
+                            const historyAmtClass = historyIsZero ? "historyAmtZero" : (historyIsPositive ? "historyAmtPlus" : "historyAmtMinus");
 
                             return (
-                                <div className="history-row" key={item.pointHistoryId}>
-                                    {/* 날짜/시간 */}
-                                    <div className="col-w-date">
-                                        <div className="row-date">{formatDate(item.pointHistoryCreatedAt)}</div>
-                                        <div className="row-time text-secondary">{formatTime(item.pointHistoryCreatedAt)}</div>
+                                <div className="historyRow" key={historyItem.pointHistoryId}>
+                                    <div className="historyColDate">
+                                        <div className="historyRowDate">{historyFormatDate(historyItem.pointHistoryCreatedAt)}</div>
+                                        <div className="historyRowTime historyTextSecondary">{historyFormatTime(historyItem.pointHistoryCreatedAt)}</div>
                                     </div>
 
-                                    {/* 유형 뱃지 */}
-                                    <div className="col-w-type">
-                                        <span className={`type-badge-glass ${item.pointHistoryTrxType.toLowerCase()}`}>
-                                            {item.pointHistoryTrxType}
+                                    <div className="historyColType">
+                                        {/* 타입별 클래스도 history 접두사 적용 */}
+                                        <span className={`historyTypeBadgeGlass historyType${historyItem.pointHistoryTrxType}`}>
+                                            {historyItem.pointHistoryTrxType}
                                         </span>
                                     </div>
 
-                                    {/* 상세 사유 */}
-                                    <div className="col-w-desc" title={getHistoryDescription(item)}>
-                                        {getHistoryDescription(item)}
+                                    <div className="historyColDesc" title={historyGetDescription(historyItem)}>
+                                        {historyGetDescription(historyItem)}
                                     </div>
 
-                                    {/* 포인트 수치 */}
-                                    <div className={`col-w-amount ${amountClass}`}>
-                                        <span className="amt-text">
-                                            {isPositive ? '+' : ''}{item.pointHistoryAmount.toLocaleString()}
+                                    <div className={`historyColAmount ${historyAmtClass}`}>
+                                        <span className="historyAmtText">
+                                            {historyIsPositive ? '+' : ''}{historyItem.pointHistoryAmount.toLocaleString()}
                                         </span>
-                                        <span className="amt-unit">P</span>
+                                        <span className="historyAmtUnit">P</span>
                                     </div>
                                 </div>
                             );
@@ -193,9 +180,7 @@ export default function HistoryView() {
                     )}
                 </div>
             </div>
-
-            {/* 페이지네이션 */}
-            {renderPagination()}
+            {historyRenderPagination()}
         </div>
     );
 }

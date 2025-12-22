@@ -1,15 +1,18 @@
 /* InventoryView.css - 시네마틱 인벤토리 최적화 버전 */
 
+.iv-container {
+    padding-bottom: 20px;
+}
+
 /* 1. 그리드 레이아웃 */
-.inven-grid {
+.iv-grid {
     display: grid;
-    /* 카드가 너무 좁아지지 않도록 최소 너비를 300px로 조정 */
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
 }
 
 /* 2. 아이템 카드 */
-.inven-card {
+.iv-card {
     background: #1f1f1f;
     border: 1px solid #333;
     border-radius: 12px;
@@ -20,7 +23,7 @@
     position: relative;
 }
 
-.inven-card:hover {
+.iv-card:hover {
     transform: translateY(-3px);
     box-shadow: 0 8px 20px rgba(0,0,0,0.5);
     background: #252525;
@@ -28,13 +31,13 @@
 }
 
 /* 장착 중인 카드 강조 */
-.inven-card.equipped-card {
+.iv-card.iv-equipped-card {
     border-color: #00d2d3;
     background: #202828;
 }
 
 /* 3. 아이템 이미지 영역 */
-.inven-img-box {
+.iv-img-box {
     width: 75px; height: 75px;
     border-radius: 10px;
     overflow: hidden;
@@ -45,13 +48,19 @@
     margin-right: 15px;
 }
 
-.inven-img {
+.iv-img {
     width: 100%; height: 100%;
     object-fit: cover;
 }
 
+.iv-no-img {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    color: #444; font-size: 0.8rem;
+}
+
 /* 수량 뱃지 */
-.inven-count-badge {
+.iv-count-badge {
     position: absolute;
     bottom: 0; right: 0;
     background: rgba(0, 210, 211, 0.9);
@@ -64,7 +73,7 @@
 }
 
 /* 착용중 배지 (이미지 위) */
-.equipped-badge-overlay {
+.iv-equipped-overlay {
     position: absolute;
     top: 0; left: 0;
     background: #00d2d3;
@@ -76,22 +85,20 @@
 }
 
 /* 4. 정보 영역 */
-.inven-info {
+.iv-info {
     flex-grow: 1;
-    min-width: 0; /* Flex 내에서 text-overflow 작동을 위한 필수 설정 */
+    min-width: 0; 
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
 
-.inven-name {
+.iv-name {
     font-size: 1rem;
     font-weight: 700;
     color: #f5f5f5;
     margin-bottom: 5px;
     line-height: 1.4;
-    
-    /* [글자잘림 해결] 최대 2줄까지 보여주고 넘치면 ... 처리 */
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -101,7 +108,7 @@
     text-overflow: ellipsis;
 }
 
-.inven-type {
+.iv-type {
     font-size: 0.75rem;
     color: #888;
     background: rgba(255,255,255,0.05);
@@ -112,15 +119,15 @@
 }
 
 /* 5. 버튼 그룹 */
-.inven-actions {
+.iv-actions {
     display: flex;
     flex-direction: column;
     gap: 6px;
     margin-left: 12px;
-    flex-shrink: 0; /* 버튼 영역 너비 보존 */
+    flex-shrink: 0;
 }
 
-.btn-inven {
+.iv-btn {
     font-size: 0.75rem;
     padding: 5px 10px;
     border-radius: 6px;
@@ -133,47 +140,46 @@
 }
 
 /* 사용/장착 버튼 */
-.btn-inven.use {
+.iv-btn-use {
     background: #00d2d3;
     color: #000;
 }
-.btn-inven.use:hover:not(:disabled) { 
+.iv-btn-use:hover:not(:disabled) { 
     background: #00eeee; 
     box-shadow: 0 0 10px rgba(0, 210, 211, 0.4); 
-    transition: 0.2s;
 }
-.btn-inven.use:disabled {
+.iv-btn-use:disabled {
     background: #333;
     color: #666;
     cursor: default;
 }
 
 /* 해제 버튼 */
-.btn-inven.unequip {
+.iv-btn-unequip {
     background: #444;
     color: #eee;
 }
-.btn-inven.unequip:hover { background: #555; }
+.iv-btn-unequip:hover { background: #555; }
 
 /* 환불 버튼 */
-.btn-inven.refund {
+.iv-btn-refund {
     background: transparent;
     border: 1px solid #555;
     color: #999;
 }
-.btn-inven.refund:hover { border-color: #888; color: #fff; }
+.iv-btn-refund:hover { border-color: #888; color: #fff; }
 
 /* 버리기 버튼 */
-.btn-inven.delete {
+.iv-btn-delete {
     background: transparent;
     color: #ff4757;
 }
-.btn-inven.delete:hover { background: rgba(255, 71, 87, 0.1); }
+.iv-btn-delete:hover { background: rgba(255, 71, 87, 0.1); }
 
 /* 빈 화면 */
-.inven-empty {
+.iv-empty {
     text-align: center;
     padding: 80px 0;
     color: #666;
 }
-.inven-empty-icon { font-size: 4rem; margin-bottom: 20px; display: block; opacity: 0.2; }
+.iv-empty-icon { font-size: 4rem; margin-bottom: 20px; display: block; opacity: 0.2; }

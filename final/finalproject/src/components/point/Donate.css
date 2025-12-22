@@ -1,16 +1,15 @@
-/* Donate.css */
-.donate-modal-overlay {
+.donateModalOverlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.85); /* 깊은 어둠 */
-    backdrop-filter: blur(8px); /* 배경 블러 */
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 10000;
 }
 
-.donate-modal-content {
+.donateModalContent {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 25px;
@@ -21,7 +20,7 @@
     position: relative;
 }
 
-.donate-header {
+.donateHeader {
     background: linear-gradient(135deg, #f1c40f, #f39c12);
     padding: 30px 20px;
     text-align: center;
@@ -29,25 +28,25 @@
     position: relative;
 }
 
-.donate-icon-circle {
+.donateIconCircle {
     font-size: 3rem;
     margin-bottom: 10px;
 }
 
-.donate-title {
+.donateTitle {
     font-family: 'Black Han Sans', sans-serif;
     font-size: 1.8rem;
     margin: 0;
     letter-spacing: 1px;
 }
 
-.donate-subtitle {
+.donateSubtitle {
     font-size: 0.85rem;
     opacity: 0.9;
     margin: 5px 0 0;
 }
 
-.donate-close-btn {
+.donateCloseBtn {
     position: absolute;
     top: 15px; right: 15px;
     background: transparent;
@@ -57,15 +56,15 @@
     cursor: pointer;
 }
 
-.donate-body {
+.donateBody {
     padding: 30px;
 }
 
-.input-group-glass {
+.donateInputGroupGlass {
     margin-bottom: 20px;
 }
 
-.input-label {
+.donateInputLabel {
     display: block;
     color: #aaa;
     font-size: 0.8rem;
@@ -73,7 +72,7 @@
     font-weight: bold;
 }
 
-.input-field {
+.donateInputField {
     width: 100%;
     background: rgba(0, 0, 0, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -84,39 +83,32 @@
     transition: 0.3s;
 }
 
-.input-field:focus {
+.donateInputField:focus {
     border-color: #f1c40f;
     box-shadow: 0 0 10px rgba(241, 196, 15, 0.3);
 }
 
-.amount-input-wrapper {
+.donateAmountInputWrapper {
     position: relative;
     display: flex;
     align-items: center;
 }
 
-.unit-text {
+.donateUnitText {
     position: absolute;
     right: 15px;
     color: #f1c40f;
     font-weight: bold;
 }
 
-.donate-info-text {
-    font-size: 0.75rem;
-    color: #666;
-    text-align: center;
-    margin-top: 10px;
-}
-
-.donate-footer {
+.donateFooter {
     padding: 0 30px 30px;
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-.btn-donate-submit {
+.donateSubmitBtn {
     background: #f1c40f;
     color: #000;
     border: none;
@@ -125,22 +117,29 @@
     font-weight: bold;
     font-size: 1.1rem;
     transition: 0.3s;
+    cursor: pointer;
 }
 
-.btn-donate-submit:hover:not(:disabled) {
+.donateSubmitBtn:hover:not(:disabled) {
     background: #f39c12;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(241, 196, 15, 0.4);
 }
 
-.btn-donate-cancel {
+.donateSubmitBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.donateCancelBtn {
     background: transparent;
     color: #777;
     border: none;
     padding: 10px;
     font-size: 0.9rem;
+    cursor: pointer;
 }
 
-.btn-donate-cancel:hover {
+.donateCancelBtn:hover {
     color: #fff;
 }

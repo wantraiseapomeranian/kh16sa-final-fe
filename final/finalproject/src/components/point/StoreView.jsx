@@ -8,122 +8,148 @@ import { pointRefreshAtom } from "../../utils/jotai";
 import Swal from "sweetalert2"; 
 import "./StoreView.css";
 
-function getScore(level) {
-    if (level === "관리자") return 99;
-    if (level === "우수회원") return 2;
-    if (level === "일반회원") return 1;
+function storeGetScore(storeLevel) {
+    if (storeLevel === "관리자") return 99;
+    if (storeLevel === "우수회원") return 2;
+    if (storeLevel === "일반회원") return 1;
     return 0; 
 }
 
-export default function StoreView({ loginLevel, refreshPoint }) {
-    const [items, setItems] = useState([]);       
-    const [myItems, setMyItems] = useState([]);   
-    const [wishList, setWishList] = useState([]); 
-    const [showAddModal, setShowAddModal] = useState(false); 
-    const [editTarget, setEditTarget] = useState(null);      
-    const setPointRefresh = useSetAtom(pointRefreshAtom);
+export default function StoreView({ loginLevel: storeLoginLevel, refreshPoint: storeRefreshPoint }) {
+    const [storeItems, setStoreItems] = useState([]);       
+    const [storeMyItems, setStoreMyItems] = useState([]);   
+    const [storeWishList, setStoreWishList] = useState([]); 
+    const [storeShowAddModal, setStoreShowAddModal] = useState(false); 
+    const [storeEditTarget, setStoreEditTarget] = useState(null);      
+    const storeSetPointRefresh = useSetAtom(pointRefreshAtom);
 
-    const loadData = useCallback(async () => {
+    const storeLoadData = useCallback(async () => {
         try {
-            const [itemResp, myResp, wishResp] = await Promise.all([
+            const [storeItemsResp, storeMyResp, storeWishResp] = await Promise.all([
                 axios.get("/point/main/store"),
-                loginLevel ? axios.get("/point/main/store/inventory/my") : Promise.resolve({ data: [] }),
-                loginLevel ? axios.get("/point/main/store/wish/check") : Promise.resolve({ data: [] })
+                storeLoginLevel ? axios.get("/point/main/store/inventory/my") : Promise.resolve({ data: [] }),
+                storeLoginLevel ? axios.get("/point/main/store/wish/check") : Promise.resolve({ data: [] })
             ]);
-            setItems(itemResp.data);
-            setMyItems(myResp.data);
-            setWishList(wishResp.data);
-        } catch (e) { console.error("데이터 로딩 실패", e); }
-    }, [loginLevel]);
+            setStoreItems(storeItemsResp.data);
+            setStoreMyItems(storeMyResp.data);
+            setStoreWishList(storeWishResp.data);
+        } catch (storeError) { console.error("데이터 로딩 실패", storeError); }
+    }, [storeLoginLevel]);
 
-    useEffect(() => { loadData(); }, [loadData]);
+    useEffect(() => { storeLoadData(); }, [storeLoadData]);
 
-    const handleBuy = async (item) => {
-        const res = await Swal.fire({ title: '구매 확인', text: `[${item.pointItemName}]을 구매하시겠습니까?`, icon: 'question', showCancelButton: true, confirmButtonColor: '#f1c40f', background: '#1a1a1a', color: '#fff' });
-        if (!res.isConfirmed) return;
+    const storeHandleBuy = async (storeItem) => {
+        const storeRes = await Swal.fire({ 
+            title: '구매 확인', 
+            text: `[${storeItem.pointItemName}]을 구매하시겠습니까?`, 
+            icon: 'question', 
+            showCancelButton: true, 
+            confirmButtonColor: '#f1c40f', 
+            background: '#1a1a1a', 
+            color: '#fff' 
+        });
+        if (!storeRes.isConfirmed) return;
         try {
-            await axios.post("/point/main/store/buy", { buyItemNo: item.pointItemNo });
+            await axios.post("/point/main/store/buy", { buyItemNo: storeItem.pointItemNo });
             toast.success("구매 완료! 🎒");
-            setPointRefresh(v => v + 1);
-            if (refreshPoint) refreshPoint();
-            loadData();
-        } catch (e) { Swal.fire({ icon: 'error', text: e.response?.data || "구매 실패", background: '#1a1a1a', color: '#fff' }); }
+            storeSetPointRefresh(v => v + 1);
+            if (storeRefreshPoint) storeRefreshPoint();
+            storeLoadData();
+        } catch (storeError) { 
+            Swal.fire({ 
+                icon: 'error', 
+                text: storeError.response?.data || "구매 실패", 
+                background: '#1a1a1a', 
+                color: '#fff' 
+            }); 
+        }
     };
 
-    const handleGift = async (item) => {
-        const { value: targetId } = await Swal.fire({ title: '아이템 선물', input: 'text', inputLabel: '상대방 ID 입력', showCancelButton: true, confirmButtonColor: '#f1c40f', background: '#1a1a1a', color: '#fff' });
-        if (!targetId) return;
+    const storeHandleGift = async (storeItem) => {
+        const { value: storeTargetId } = await Swal.fire({ 
+            title: '아이템 선물', 
+            input: 'text', 
+            inputLabel: '상대방 ID 입력', 
+            showCancelButton: true, 
+            confirmButtonColor: '#f1c40f', 
+            background: '#1a1a1a', 
+            color: '#fff' 
+        });
+        if (!storeTargetId) return;
         try {
-            await axios.post("/point/main/store/gift", { itemNo: item.pointItemNo, targetId });
-            toast.success(`${targetId}님께 선물 완료!`);
-            setPointRefresh(v => v + 1);
-            loadData();
-        } catch (e) { toast.error(e.response?.data || "실패"); }
+            await axios.post("/point/main/store/gift", { itemNo: storeItem.pointItemNo, targetId: storeTargetId });
+            toast.success(`${storeTargetId}님께 선물 완료!`);
+            storeSetPointRefresh(v => v + 1);
+            storeLoadData();
+        } catch (storeError) { toast.error(storeError.response?.data || "실패"); }
     };
 
-    const handleToggleWish = async (itemNo) => {
-        if (!loginLevel) return toast.warning("로그인이 필요합니다.");
+    const storeHandleToggleWish = async (storeItemNo) => {
+        if (!storeLoginLevel) return toast.warning("로그인이 필요합니다.");
         try {
-            await axios.post("/point/main/store/wish/toggle", { itemNo });
-            loadData();
-        } catch (e) { toast.error("찜하기 실패"); }
+            await axios.post("/point/main/store/wish/toggle", { itemNo: storeItemNo });
+            storeLoadData();
+        } catch (storeError) { toast.error("찜하기 실패"); }
     };
 
     return (
-        <div className="store-container">
-            <div className="store-header">
-                <h4 className="store-title">popcorn 스토어 <span>({items.length})</span></h4>
-                {loginLevel === "관리자" && <button className="btn-add" onClick={() => setShowAddModal(true)}>+ 상품 등록</button>}
+        <div className="storeContainer">
+            <div className="storeHeader">
+                <h4 className="storeTitle">popcorn 스토어 <span>({storeItems.length})</span></h4>
+                {storeLoginLevel === "관리자" && (
+                    <button className="storeBtnAdd" onClick={() => setStoreShowAddModal(true)}>+ 상품 등록</button>
+                )}
             </div>
 
-            <div className="goods-grid">
-                {items.map((item) => {
-                    const myScore = getScore(loginLevel);
-                    const reqScore = getScore(item.pointItemReqLevel);
-                    const canAccess = (myScore >= reqScore);
-                    const isSoldOut = item.pointItemStock <= 0;
+            <div className="storeGoodsGrid">
+                {storeItems.map((storeItem) => {
+                    const storeMyScore = storeGetScore(storeLoginLevel);
+                    const storeReqScore = storeGetScore(storeItem.pointItemReqLevel);
+                    const storeCanAccess = (storeMyScore >= storeReqScore);
+                    const storeIsSoldOut = storeItem.pointItemStock <= 0;
 
-                    // 🔴 보유 상태 확인 (Number 형변환으로 정확도 상승)
-                    const isOwned = myItems.some(i => Number(i.inventoryItemNo) === Number(item.pointItemNo));
-                    const isLimitedAndOwned = isOwned && item.pointItemIsLimitedPurchase === 1;
+                    const storeIsOwned = storeMyItems.some(i => Number(i.inventoryItemNo) === Number(storeItem.pointItemNo));
+                    const storeIsLimitedAndOwned = storeIsOwned && storeItem.pointItemIsLimitedPurchase === 1;
 
                     return (
-                        <div className={`goods-card ${isSoldOut ? "disabled" : ""}`} key={item.pointItemNo}>
-                            <div className="goods-img-box">
-                                <img src={item.pointItemSrc || "/default.png"} alt="item" />
+                        <div className={`storeGoodsCard ${storeIsSoldOut ? "disabled" : ""}`} key={storeItem.pointItemNo}>
+                            <div className="storeGoodsImgBox">
+                                <img src={storeItem.pointItemSrc || "/default.png"} alt="item" />
                                 
-                                {/* 🔴 찜 버튼 복구 */}
-                                <button className="wish-overlay" onClick={() => handleToggleWish(item.pointItemNo)}>
-                                    {wishList.includes(item.pointItemNo) ? "❤️" : "🤍"}
+                                <button className="storeWishOverlay" onClick={() => storeHandleToggleWish(storeItem.pointItemNo)}>
+                                    {storeWishList.includes(storeItem.pointItemNo) ? "❤️" : "🤍"}
                                 </button>
 
-                                {/* 🔴 배지 오버레이 (보유중 표시) */}
-                                <div className="badge-overlay">
-                                    {isOwned && <span className="badge-own">보유중</span>}
-                                    {isSoldOut && <span className="badge-soldout">품절</span>}
+                                <div className="storeBadgeOverlay">
+                                    {storeIsOwned && <span className="storeBadgeOwn">보유중</span>}
+                                    {storeIsSoldOut && <span className="storeBadgeSoldout">품절</span>}
                                 </div>
                             </div>
-                            <div className="goods-content">
-                                <h5 className="item-name">{item.pointItemName}</h5>
-                                <div className="item-meta-row">
-                                    <span className="badge-lv">Lv.{item.pointItemReqLevel}</span>
-                                    {item.pointItemDailyLimit > 0 && <span className="badge-daily">일일 {item.pointItemDailyLimit}개</span>}
+                            <div className="storeGoodsContent">
+                                <h5 className="storeItemName">{storeItem.pointItemName}</h5>
+                                <div className="storeItemMetaRow">
+                                    <span className="storeBadgeLv">Lv.{storeItem.pointItemReqLevel}</span>
+                                    {storeItem.pointItemDailyLimit > 0 && (
+                                        <span className="storeBadgeDaily">일일 {storeItem.pointItemDailyLimit}개</span>
+                                    )}
                                 </div>
-                                <div className="item-bottom-group">
-                                    <div className="item-price">{item.pointItemPrice.toLocaleString()} P</div>
-                                    <div className="item-buttons">
-                                        {canAccess ? (
+                                <div className="storeItemBottomGroup">
+                                    <div className="storeItemPrice">{storeItem.pointItemPrice.toLocaleString()} P</div>
+                                    <div className="storeItemButtons">
+                                        {storeCanAccess ? (
                                             <>
                                                 <button 
-                                                    className={`btn-buy ${isLimitedAndOwned ? "owned" : ""}`} 
-                                                    onClick={() => handleBuy(item)} 
-                                                    disabled={isSoldOut || isLimitedAndOwned}
+                                                    className={`storeBtnBuy ${storeIsLimitedAndOwned ? "owned" : ""}`} 
+                                                    onClick={() => storeHandleBuy(storeItem)} 
+                                                    disabled={storeIsSoldOut || storeIsLimitedAndOwned}
                                                 >
-                                                    {isLimitedAndOwned ? "보유함" : "구매"}
+                                                    {storeIsLimitedAndOwned ? "보유함" : "구매"}
                                                 </button>
-                                                <button className="btn-gift" onClick={() => handleGift(item)} disabled={isSoldOut}>선물</button>
+                                                <button className="storeBtnGift" onClick={() => storeHandleGift(storeItem)} disabled={storeIsSoldOut}>선물</button>
                                             </>
-                                        ) : ( <button className="btn-locked" disabled>🔒 등급 부족</button> )}
+                                        ) : ( 
+                                            <button className="storeBtnLocked" disabled>🔒 등급 부족</button> 
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -131,8 +157,8 @@ export default function StoreView({ loginLevel, refreshPoint }) {
                     );
                 })}
             </div>
-            {showAddModal && <ProductAdd closeModal={() => setShowAddModal(false)} reload={loadData} />}
-            {editTarget && <ProductEdit target={editTarget} closeModal={() => setEditTarget(null)} reload={loadData} />}
+            {storeShowAddModal && <ProductAdd closeModal={() => setStoreShowAddModal(false)} reload={storeLoadData} />}
+            {storeEditTarget && <ProductEdit target={storeEditTarget} closeModal={() => setStoreEditTarget(null)} reload={storeLoadData} />}
         </div>
     );
 }

@@ -1,16 +1,12 @@
-
-.store-profile-wrapper {
-    /* 일일 퀘스트와의 간격 (유지) */
+.prcard-store-profile-wrapper {
     margin-bottom: 100px; 
-    /* 카드 너비 (유지) */
     max-width: 580px; 
     width: 100%;
     margin-left: auto;
     margin-right: auto;
 }
 
-/* [1] 카드 본체 (유지) */
-.membership-card {
+.prcard-membership-card {
     position: relative;
     width: 100%;
     height: 220px; 
@@ -26,28 +22,26 @@
     transition: all 0.4s ease;
 }
 
-/* 배경 100% 적용 (유지) */
-.membership-card[class*="bg-"] {
+/* 배경 선택자 (prcard-bg- 구조 유지) */
+.prcard-membership-card[class*="prcard-bg-"] {
     background-size: 100% 100% !important; 
     background-position: center !important;
     background-repeat: no-repeat !important;
 }
 
-.membership-card[class*="bg-"]::before {
+.prcard-membership-card[class*="prcard-bg-"]::before {
     content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
     border-radius: 25px; z-index: -1;
     background: rgba(0, 0, 0, 0.25); 
 }
 
-/* ------------------------------------------------------
-   [중요] 프레임 효과 수정 구간
------------------------------------------------------- */
-.membership-card[class*="frame-"]::after {
+/* 프레임 선택자 (prcard-frame- 구조 유지) */
+.prcard-membership-card[class*="prcard-frame-"]::after {
     content: "";
     position: absolute;
-    top: -6px; left: -6px; right: -6px; bottom: -6px; /* 테두리 두께 조절 */
+    top: -6px; left: -6px; right: -6px; bottom: -6px;
     border-radius: 30px;
-    padding: 6px; /* 테두리 두께 */
+    padding: 6px;
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
@@ -55,69 +49,61 @@
     pointer-events: none;
 }
 
-/* 1. 골드 프레임 (기존 유지 및 개선) */
-.membership-card.frame-gold::after {
+/* 1. 골드 프레임 */
+.prcard-membership-card.prcard-frame-gold::after {
     background: linear-gradient(110deg, #ffd700, #fff5b7, #b8860b, #ffd700);
     background-size: 200% auto;
-    animation: shine-sweep 3s linear infinite;
+    animation: prcard-shine-sweep 3s linear infinite;
 }
 
-/* 2. 다이아몬드/아이스 프레임 (기존 frame-ice 대체) */
-.membership-card.frame-ice::after {
+/* 2. 아이스 프레임 */
+.prcard-membership-card.prcard-frame-ice::after {
     background: linear-gradient(110deg, #a5f3fc, #ffffff, #22d3ee, #a5f3fc);
     background-size: 200% auto;
-    animation: shine-sweep 3s linear infinite;
+    animation: prcard-shine-sweep 3s linear infinite;
     filter: drop-shadow(0 0 8px #06b6d4);
 }
 
-/* 3. 인페르노/파이어 프레임 (기존 frame-fire 대체) */
-.membership-card.frame-fire::after {
+/* 3. 파이어 프레임 */
+.prcard-membership-card.prcard-frame-fire::after {
     background: linear-gradient(110deg, #f87171, #fef08a, #ef4444, #f87171);
     background-size: 200% auto;
-    animation: shine-sweep 1.5s linear infinite; /* 불꽃처럼 조금 더 빠르게 */
+    animation: prcard-shine-sweep 1.5s linear infinite;
     filter: drop-shadow(0 0 10px #ff4500);
 }
 
-/* 4. 네온 퍼플 프레임 (새로운 스타일 제안) */
-.membership-card.frame-neon::after {
+/* 4. 네온 퍼플 프레임 */
+.prcard-membership-card.prcard-frame-neon::after {
     background: linear-gradient(110deg, #c084fc, #ffffff, #7c3aed, #c084fc);
     background-size: 200% auto;
-    animation: shine-sweep 2.5s linear infinite;
+    animation: prcard-shine-sweep 2.5s linear infinite;
     filter: drop-shadow(0 0 10px #a855f7);
 }
 
-/* 프레임 애니메이션: 빛이 흐르는 효과 */
-@keyframes shine-sweep {
+@keyframes prcard-shine-sweep {
     to { background-position: 200% center; }
 }
 
-/* 마우스 호버 시 카드 자체가 살짝 빛나는 효과 (선택 사항) */
-.membership-card:hover {
+.prcard-membership-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 15px 30px rgba(0,0,0,0.5);
 }
-/* ------------------------------------------------------
-   내부 요소 및 애니메이션 (유지)
------------------------------------------------------- */
-.card-user-info, .card-point-wallet { position: relative; z-index: 20; }
-.card-avatar-box { width: 100px; height: 100px; border-radius: 50%; overflow: hidden; border: 3px solid rgba(255,255,255,0.4); background: #000; }
-.card-avatar-img { width: 100%; height: 100%; object-fit: cover; }
-.card-nickname { font-size: 1.8rem; font-weight: 900; color: #fff; margin-top: 12px; text-shadow: 0 3px 8px rgba(0,0,0,0.8); }
-.wallet-label { display: block; font-size: 0.95rem; color: #4ade80; font-weight: 800; margin-bottom: 6px; }
-.wallet-amount { font-size: 2.6rem; font-weight: 900; color: #fff; text-shadow: 0 0 15px rgba(0, 210, 211, 0.5); }
 
-@keyframes gold-shine { to { background-position: 200% center; } }
-@keyframes ice-pulse { from { transform: scale(0.98); } to { transform: scale(1.02); } }
-@keyframes super-fire-burn { from { transform: scale(0.98); } to { transform: scale(1.03); } }
+.prcard-card-user-info, .prcard-card-point-wallet { position: relative; z-index: 20; }
+.prcard-card-avatar-box { width: 100px; height: 100px; border-radius: 50%; overflow: hidden; border: 3px solid rgba(255,255,255,0.4); background: #000; }
+.prcard-card-avatar-img { width: 100%; height: 100%; object-fit: cover; }
+.prcard-card-nickname { font-size: 1.8rem; font-weight: 900; color: #fff; margin-top: 12px; text-shadow: 0 3px 8px rgba(0,0,0,0.8); }
+.prcard-wallet-label { display: block; font-size: 0.95rem; color: #4ade80; font-weight: 800; margin-bottom: 6px; }
+.prcard-wallet-amount { font-size: 2.6rem; font-weight: 900; color: #fff; text-shadow: 0 0 15px rgba(0, 210, 211, 0.5); }
 
-/* 배경 리스트 (유지) */
-.membership-card.bg-chain { background-image: url('https://i.postimg.cc/CKnTfP91/chain.webp') !important; }
-.membership-card.bg-harrypotter { background-image: url('https://i.postimg.cc/PxtJHv6w/haelipoteo.jpg') !important; }
-.membership-card.bg-jootopia { background-image: url('https://i.postimg.cc/7ZFJF68r/jutopia.jpg') !important; }
-.membership-card.bg-disney { background-image: url('https://i.postimg.cc/tg9pnQFN/dijeunikeompyuteobaegyeonghwamyeon06.jpg') !important; }
-.membership-card.bg-forest { background-image: url('https://i.postimg.cc/qRdbv4n7/poleseuteu.jpg') !important; }
-.membership-card.bg-taitanig { background-image: url('https://i.postimg.cc/SKLLV82J/taitanig.jpg') !important; }
-.membership-card.bg-kaisen { background-image: url('https://i.postimg.cc/13mNPTf9/jusulhoejeon.jpg') !important; }
-.membership-card.bg-ice { background-image: url('https://i.postimg.cc/tRF8hVJG/icewall.webp') !important; }
-.membership-card.bg-fallout { background-image: url('https://i.postimg.cc/0jb2F2hg/pol-ausbaegyeonghwamyeon.webp') !important; }
-.membership-card.bg-tanjiro { background-image: url('https://i.postimg.cc/Dy4V8YGP/tanjiro.webp') !important; }
+/* 배경 리스트 (기존 구조 유지) */
+.prcard-membership-card.prcard-bg-chain { background-image: url('https://i.postimg.cc/CKnTfP91/chain.webp') !important; }
+.prcard-membership-card.prcard-bg-harrypotter { background-image: url('https://i.postimg.cc/PxtJHv6w/haelipoteo.jpg') !important; }
+.prcard-membership-card.prcard-bg-jootopia { background-image: url('https://i.postimg.cc/7ZFJF68r/jutopia.jpg') !important; }
+.prcard-membership-card.prcard-bg-disney { background-image: url('https://i.postimg.cc/tg9pnQFN/dijeunikeompyuteobaegyeonghwamyeon06.jpg') !important; }
+.prcard-membership-card.prcard-bg-forest { background-image: url('https://i.postimg.cc/qRdbv4n7/poleseuteu.jpg') !important; }
+.prcard-membership-card.prcard-bg-taitanig { background-image: url('https://i.postimg.cc/SKLLV82J/taitanig.jpg') !important; }
+.prcard-membership-card.prcard-bg-kaisen { background-image: url('https://i.postimg.cc/13mNPTf9/jusulhoejeon.jpg') !important; }
+.prcard-membership-card.prcard-bg-ice { background-image: url('https://i.postimg.cc/tRF8hVJG/icewall.webp') !important; }
+.prcard-membership-card.prcard-bg-fallout { background-image: url('https://i.postimg.cc/0jb2F2hg/pol-ausbaegyeonghwamyeon.webp') !important; }
+.prcard-membership-card.prcard-bg-tanjiro { background-image: url('https://i.postimg.cc/Dy4V8YGP/tanjiro.webp') !important; }

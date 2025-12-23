@@ -49,7 +49,12 @@ export default function AdminInventory() {
             setIconList(resIcon.data || []);
             toast.info("자산 정보를 동기화했습니다.");
         } catch (err) {
-            Swal.fire("조회 실패", "존재하지 않는 유저이거나 서버 오류입니다.", "error");
+            Swal.fire({
+                title: "조회 실패",
+                text: "존재하지 않는 유저이거나 서버 오류입니다.",
+                icon: "error",
+                didOpen: () => (Swal.getContainer().style.zIndex = "3000") // 최상단 유지
+            });
         } finally { setLoading(false); }
     }, [searchId]);
 
@@ -60,7 +65,8 @@ export default function AdminInventory() {
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
-            background: '#1a1a1a', color: '#fff'
+            background: '#1a1a1a', color: '#fff',
+            didOpen: () => (Swal.getContainer().style.zIndex = "3000") // 최상단 유지
         });
 
         if (result.isConfirmed) {
@@ -78,14 +84,27 @@ export default function AdminInventory() {
         try {
             const url = type === "item" ? `/admin/inventory/${searchId}/${targetNo}` : `/admin/icon/${searchId}/${targetNo}`;
             await axios.post(url);
+            
+            // 알림창 z-index 보정 추가
             await Swal.fire({ 
-                icon: 'success', title: '지급 완료', 
+                icon: 'success', 
+                title: '지급 완료', 
                 text: `[${name}] 지급되었습니다.`, 
-                timer: 1500, showConfirmButton: false, background: '#1a1a1a', color: '#fff' 
+                timer: 1500, 
+                showConfirmButton: false, 
+                background: '#1a1a1a', 
+                color: '#fff',
+                didOpen: () => (Swal.getContainer().style.zIndex = "3000") 
             });
+            
             fetchUserData();
         } catch { 
-            Swal.fire("지급 실패", "이미 보유 중이거나 시스템 오류입니다.", "error"); 
+            Swal.fire({
+                icon: "error",
+                title: "지급 실패",
+                text: "이미 보유 중이거나 시스템 오류입니다.",
+                didOpen: () => (Swal.getContainer().style.zIndex = "3000")
+            }); 
         }
     };
 
@@ -99,7 +118,7 @@ export default function AdminInventory() {
                         <div className="ai-flex-row ai-gap-2">
                             <input className="ai-search-input" placeholder="조회할 유저 ID 입력" value={searchId} onChange={e => setSearchId(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && fetchUserData()} />
                             <button className="ai-btn-main" onClick={fetchUserData} disabled={loading}>
-                                {loading ? <span className="ai-spinner"></span> : "조회"}
+                                {loading ? "로딩..." : "조회"}
                             </button>
                             <button className="ai-btn-success ai-ms-auto" onClick={() => setShowModal(true)} disabled={!searchId}>➕ 자산 수동 지급</button>
                         </div>
@@ -153,18 +172,16 @@ export default function AdminInventory() {
                                     <button className="ai-btn-close" onClick={() => setShowModal(false)}>×</button>
                                 </div>
                                 <div className="ai-modal-body">
-                                    <div className="ai-flex-row ai-gap-2 ai-mb-4">
+                                    <div className="ai-flex-row ai-gap-2 mb-4">
                                         <button className={`ai-btn-tab-sm ${grantTab === "item" ? "active" : ""}`} onClick={() => setGrantTab("item")}>상점 아이템</button>
                                         <button className={`ai-btn-tab-sm ${grantTab === "icon" ? "active" : ""}`} onClick={() => setGrantTab("icon")}>마스터 아이콘</button>
                                     </div>
                                     <div className="ai-grant-grid">
                                         {(grantTab === "item" ? storeItems : masterIcons).map(data => (
-                                            <div className="ai-grant-item" key={grantTab === "item" ? data.pointItemNo : data.iconId}>
-                                                <div className="ai-grant-card">
-                                                    <img src={grantTab === "item" ? data.pointItemSrc : data.iconSrc} className="ai-grant-img" alt="" />
-                                                    <div className="ai-grant-name">{grantTab === "item" ? data.pointItemName : data.iconName}</div>
-                                                    <button className="ai-btn-give" onClick={() => handleGrant(grantTab, grantTab === "item" ? data.pointItemNo : data.iconId, grantTab === "item" ? data.pointItemName : data.iconName)}>지급</button>
-                                                </div>
+                                            <div className="ai-grant-card" key={grantTab === "item" ? data.pointItemNo : data.iconId}>
+                                                <img src={grantTab === "item" ? data.pointItemSrc : data.iconSrc} className="ai-grant-img" alt="" />
+                                                <div className="ai-grant-name">{grantTab === "item" ? data.pointItemName : data.iconName}</div>
+                                                <button className="ai-btn-give" onClick={() => handleGrant(grantTab, grantTab === "item" ? data.pointItemNo : data.iconId, grantTab === "item" ? data.pointItemName : data.iconName)}>지급</button>
                                             </div>
                                         ))}
                                     </div>

@@ -126,10 +126,11 @@ export default function WishlistView({ wishlistRefreshPoint }) {
 
             {/* 상세 모달 */}
             {wishlistSelectedItemNo && (
-                <PointItemDetailView
-                    itemNo={wishlistSelectedItemNo} 
-                    onClose={() => setWishlistSelectedItemNo(null)} 
-                />
+    <PointItemDetailView
+        itemNo={wishlistSelectedItemNo} 
+        onClose={() => setWishlistSelectedItemNo(null)} 
+        itemdetailRefresh={wishlistLoadItems} 
+    />
             )}
         </div>
     );
